@@ -101,7 +101,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
             {trip.category}
           </Badge>
         </div>
-        <div className="p-2">
+        <div className="p-2 flex-1 flex flex-col justify-between">
           <p className="font-semibold text-gray-900 text-xs line-clamp-1">{trip.title}</p>
           <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
             <MapPin className="w-2.5 h-2.5" />
