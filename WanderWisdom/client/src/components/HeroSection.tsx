@@ -153,8 +153,8 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const opacity = useTransform(
     scrollProgress,
-    [0, animationStart, animationEnd - 0.05, animationEnd],
-    [1, 1, 0.1, 0]
+    [0, animationEnd, 1],
+    [1, 1, 0]
   );
 
   return (
