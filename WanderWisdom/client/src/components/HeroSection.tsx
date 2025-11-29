@@ -317,7 +317,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       </div>
 
       {/* Overlapping Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "48%", width: "950px" }}>
+      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "48%", width: "1050px" }}>
         {/* Left Overlapping Review */}
         {reviews[2] && (
           <motion.div 
