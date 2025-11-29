@@ -319,8 +319,15 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
               },
             }}
           >
-            <div className="flex justify-center">
-              {/* Middle column only */}
+            <div className="flex gap-8 items-start">
+              {/* Left column */}
+              <div className="flex flex-col gap-2 h-full">
+                {[0].map((index) => (
+                  <Placeholder key={`left-${index}`} side="left" index={index} />
+                ))}
+              </div>
+              
+              {/* Middle column */}
               <div className="flex flex-col gap-4">
                 {[1, 4, 7].map((idx) => {
                   const trip = popularTrips[idx];
@@ -328,6 +335,13 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
                     <CardComponent key={idx} trip={trip} gridIndex={idx} />
                   ) : null;
                 })}
+              </div>
+              
+              {/* Right column */}
+              <div className="flex flex-col gap-2 h-full">
+                {[0].map((index) => (
+                  <Placeholder key={`right-${index}`} side="right" index={index} />
+                ))}
               </div>
             </div>
           </motion.div>
