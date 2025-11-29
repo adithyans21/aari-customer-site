@@ -375,7 +375,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.1 }}
-            style={{ rotate: 5 }}
+            style={{ rotate: -5, transform: "translateX(-40px) translateY(30px)" }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
@@ -399,7 +399,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.2 }}
-            style={{ rotate: -5 }}
+            style={{ rotate: 5, transform: "translateX(40px) translateY(30px)" }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
