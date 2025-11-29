@@ -28,38 +28,23 @@ interface HeroCard {
 }
 
 const getHeroCards = (): HeroCard[] => {
-  const leftPositions = [
-    { top: "8%", left: "1%", rotation: 3 },
-    { top: "24%", left: "1%", rotation: -5 },
-    { top: "40%", left: "1%", rotation: 8 },
-    { top: "56%", left: "1%", rotation: -3 },
-    { top: "72%", left: "1%", rotation: 2 },
-  ];
-  
-  const rightPositions = [
-    { top: "8%", right: "1%", rotation: -3 },
-    { top: "24%", right: "1%", rotation: 5 },
-    { top: "40%", right: "1%", rotation: -2 },
-    { top: "56%", right: "1%", rotation: 4 },
-  ];
-
   return [
-    ...popularTrips.slice(0, 5).map((trip, idx) => ({
-      ...trip,
+    {
+      ...popularTrips[0],
       type: "trip",
       side: "left" as const,
-      position: leftPositions[idx],
-      delay: idx * 0.15,
-      heroIdx: idx,
-    })),
-    ...popularTrips.slice(5, 9).map((trip, idx) => ({
-      ...trip,
+      position: { top: "30%", left: "2%", rotation: 3 },
+      delay: 0,
+      heroIdx: 0,
+    },
+    {
+      ...popularTrips[1],
       type: "trip",
       side: "right" as const,
-      position: rightPositions[idx],
-      delay: 0.5 + idx * 0.15,
-      heroIdx: 5 + idx,
-    })),
+      position: { top: "30%", right: "2%", rotation: -3 },
+      delay: 0.15,
+      heroIdx: 1,
+    },
   ];
 };
 

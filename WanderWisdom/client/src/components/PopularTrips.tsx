@@ -20,10 +20,10 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [dockedCards, setDockedCards] = useState<boolean[]>([false, false, false, false, false, false, false, false, false]);
+  const [dockedCards, setDockedCards] = useState<boolean[]>([false, false]);
   
-  const leftPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null, null]);
-  const rightPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null]);
+  const leftPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null]);
+  const rightPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null]);
 
   const updatePlaceholderPositions = useCallback(() => {
     const leftPositions = leftPlaceholderRefs.current.map(ref => {
