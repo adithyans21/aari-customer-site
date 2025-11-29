@@ -147,8 +147,8 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const rotateZ = useTransform(
     scrollProgress,
-    [animationStart - 0.05, animationEnd],
-    [card.position.rotation, 0]
+    [0, animationStart, animationEnd],
+    [card.position.rotation, card.position.rotation, 0]
   );
 
 
@@ -173,7 +173,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
         x: hasEnteredView ? translateX : 0,
         y: hasEnteredView ? translateY : 0,
         scale: hasEnteredView ? scale : 1,
-        rotateZ: hasEnteredView ? rotateZ : card.position.rotation,
+        rotateZ: hasEnteredView ? rotateZ : 0,
         opacity: 1,
       }}
       data-testid={`card-hero-${card.heroIdx}`}
