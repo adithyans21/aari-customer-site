@@ -1,11 +1,11 @@
 import { useRef, useEffect, useState, useMemo, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, MapPin, MessageCircle, Star } from "lucide-react";
+import { Sparkles, MapPin, MessageCircle, Star, Quote } from "lucide-react";
 import { motion, useTransform, MotionValue, useMotionValueEvent, useScroll } from "framer-motion";
 import heroImage from "@assets/generated_images/kodaikanal_landscape_sunset_view.png";
 import AariLogo from "./AariLogo";
-import { popularTrips } from "@shared/trips";
+import { popularTrips, reviews } from "@shared/trips";
 
 interface HeroCard {
   id: number;
@@ -264,6 +264,57 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           placeholderPositions={placeholderPositions}
         />
       ))}
+
+      {/* Review Cards */}
+      <div className="absolute hidden lg:flex gap-8 w-full justify-between px-6 pointer-events-none" style={{ top: "35%" }}>
+        {/* Left Review */}
+        {reviews[0] && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+            style={{ rotate: -3 }}
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+          >
+            <div>
+              <Quote className="w-4 h-4 text-purple-500 mb-2" />
+              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[0].quote}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-800">{reviews[0].author}</span>
+              <div className="flex gap-0.5">
+                {[...Array(reviews[0].rating)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Right Review */}
+        {reviews[1] && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            style={{ rotate: 3, marginLeft: "auto" }}
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+          >
+            <div>
+              <Quote className="w-4 h-4 text-purple-500 mb-2" />
+              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[1].quote}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-800">{reviews[1].author}</span>
+              <div className="flex gap-0.5">
+                {[...Array(reviews[1].rating)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
         <motion.div
