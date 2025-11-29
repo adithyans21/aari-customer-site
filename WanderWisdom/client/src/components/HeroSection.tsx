@@ -1,0 +1,241 @@
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Sparkles, MapPin, MessageCircle, Clock, Star } from "lucide-react";
+import { motion } from "framer-motion";
+import heroImage from "@assets/generated_images/kodaikanal_landscape_sunset_view.png";
+import AariLogo from "./AariLogo";
+import { popularTrips } from "@shared/trips";
+
+// 4 cards on each side for hero animation
+const getHeroCards = () => {
+  const leftPositions = [
+    { top: "10%", left: "2%", rotation: 3 },
+    { top: "28%", left: "2%", rotation: -5 },
+    { top: "46%", left: "2%", rotation: 8 },
+    { top: "64%", left: "2%", rotation: -3 },
+  ];
+  
+  const rightPositions = [
+    { top: "10%", right: "2%", rotation: -3 },
+    { top: "28%", right: "2%", rotation: 5 },
+    { top: "46%", right: "2%", rotation: -2 },
+    { top: "64%", right: "2%", rotation: 4 },
+  ];
+
+  return [
+    ...popularTrips.slice(0, 4).map((trip, idx) => ({
+      ...trip,
+      type: "trip",
+      side: "left" as const,
+      position: leftPositions[idx],
+      delay: idx * 0.15,
+      heroIdx: idx,
+    })),
+    ...popularTrips.slice(4, 8).map((trip, idx) => ({
+      ...trip,
+      type: "trip",
+      side: "right" as const,
+      position: rightPositions[idx],
+      delay: 0.5 + idx * 0.15,
+      heroIdx: 4 + idx,
+    })),
+  ];
+};
+
+export default function HeroSection() {
+  const heroCards = getHeroCards();
+
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${heroImage})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-purple-900/20" />
+      
+      {/* Floating Cards - Popular Trips - Sequential Animation */}
+      {heroCards.map((card) => (
+        <motion.div
+          key={`${card.id}-${card.side}`}
+          initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
+          animate={{ opacity: 1, scale: 1, y: 0, rotate: card.position.rotation, x: 0 }}
+          transition={{ delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
+          whileHover={{ scale: 1.05, y: -4 }}
+          className={`absolute hidden lg:block pointer-events-none z-20`}
+          style={{
+            top: card.position.top,
+            left: "left" in card.position ? card.position.left : undefined,
+            right: "right" in card.position ? card.position.right : undefined,
+          }}
+          data-testid={`card-hero-${card.heroIdx}`}
+        >
+          <motion.div className="pointer-events-auto">
+            {card.type === "trip" && (
+              <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72">
+                <div className="relative h-12 overflow-hidden">
+                  <img 
+                    src={card.image}
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  <Badge 
+                    variant="secondary" 
+                    className="absolute top-1 left-1 bg-white/90 text-gray-800 text-xs"
+                  >
+                    {card.category}
+                  </Badge>
+                </div>
+                <div className="p-2">
+                  <p className="font-semibold text-gray-900 text-xs line-clamp-1">{card.title}</p>
+                  <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
+                    <MapPin className="w-2.5 h-2.5" />
+                    {card.location}
+                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                      <span className="text-xs font-semibold text-gray-900">{card.rating}</span>
+                    </div>
+                    <span className="text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                      ₹{card.price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </motion.div>
+      ))}
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="flex justify-center mb-8"
+        >
+          <motion.div
+            animate={{ rotate: [0, 360] }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="text-white/90"
+          >
+            <AariLogo size={64} />
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          <Badge 
+            variant="secondary" 
+            className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm"
+          >
+            <Sparkles className="w-3 h-3 mr-1" />
+            AI-Powered Travel Planning
+          </Badge>
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+        >
+          Your Friendly
+          <br />
+          <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-purple-400 bg-clip-text text-transparent">
+            Travel Planner
+          </span>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="text-lg lg:text-xl text-white/80 max-w-2xl mx-auto mb-8"
+        >
+          Meet Aari — your AI travel assistant that helps plan tours, book cabs, 
+          and create personalized experiences just for you.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="flex justify-center"
+        >
+          <Button 
+            size="lg" 
+            className="text-lg px-8 py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 shadow-lg shadow-purple-500/25"
+            data-testid="button-hero-start"
+          >
+            <motion.span
+              className="flex items-center gap-2"
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <MessageCircle className="w-5 h-5" />
+              Start Chatting
+            </motion.span>
+          </Button>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="mt-12 flex items-center justify-center text-white/70"
+        >
+          <div className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            <span className="text-sm">
+              Operating in <span className="font-semibold text-white">Kodaikanal</span>
+            </span>
+          </div>
+        </motion.div>
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.8 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+      >
+        <motion.div 
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center pt-2"
+        >
+          <motion.div
+            animate={{ y: [0, 8, 0], opacity: [1, 0.5, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            className="w-1.5 h-1.5 bg-white rounded-full"
+          />
+        </motion.div>
+      </motion.div>
+
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <motion.div
+          animate={{ 
+            x: [0, 100, 0],
+            y: [0, -50, 0],
+          }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
+        />
+        <motion.div
+          animate={{ 
+            x: [0, -80, 0],
+            y: [0, 60, 0],
+          }}
+          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"
+        />
+      </div>
+    </section>
+  );
+}
