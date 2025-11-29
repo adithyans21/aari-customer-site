@@ -35,9 +35,9 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       <Header />
-      <main>
+      <main className="relative">
         <HeroSection 
           scrollProgress={smoothScrollProgress}
           placeholderPositions={placeholderPositions}
