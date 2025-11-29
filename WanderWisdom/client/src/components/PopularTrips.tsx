@@ -319,25 +319,8 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
               },
             }}
           >
-            <div className="flex gap-8 items-start">
-              {/* Left column - 7 cards */}
-              <div className="flex flex-col gap-2 h-full">
-                {/* 4 placeholders for hero cards to land in */}
-                {[0, 1, 2, 3].map((index) => (
-                  <Placeholder key={`left-${index}`} side="left" index={index} />
-                ))}
-                {/* 3 actual cards - pushed to bottom */}
-                <div className="flex flex-col gap-2 mt-auto">
-                  {[8, 9, 10].map((idx) => {
-                    const trip = popularTrips[idx];
-                    return trip ? (
-                      <HeroCardComponent key={idx} trip={trip} />
-                    ) : null;
-                  })}
-                </div>
-              </div>
-              
-              {/* Middle column */}
+            <div className="flex justify-center">
+              {/* Middle column only */}
               <div className="flex flex-col gap-4">
                 {[1, 4, 7].map((idx) => {
                   const trip = popularTrips[idx];
@@ -345,23 +328,6 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
                     <CardComponent key={idx} trip={trip} gridIndex={idx} />
                   ) : null;
                 })}
-              </div>
-              
-              {/* Right column - 7 cards */}
-              <div className="flex flex-col gap-2 h-full">
-                {/* 4 placeholders for hero cards to land in */}
-                {[0, 1, 2, 3].map((index) => (
-                  <Placeholder key={`right-${index}`} side="right" index={index} />
-                ))}
-                {/* 3 actual cards - pushed to bottom */}
-                <div className="flex flex-col gap-2 mt-auto">
-                  {[11, 12, 13].map((idx) => {
-                    const trip = popularTrips[idx];
-                    return trip ? (
-                      <HeroCardComponent key={idx} trip={trip} />
-                    ) : null;
-                  })}
-                </div>
               </div>
             </div>
           </motion.div>
