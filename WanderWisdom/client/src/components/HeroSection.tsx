@@ -124,7 +124,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   const hasValidPositions = initialPagePos && targetPlaceholder && targetPlaceholder.width > 0;
 
   const deltaX = hasValidPositions ? targetPlaceholder.left - initialPagePos.x : 0;
-  const deltaY = hasValidPositions ? targetPlaceholder.top - initialPagePos.y - 40 : 0;
+  const deltaY = hasValidPositions ? targetPlaceholder.top - initialPagePos.y : 0;
 
   // IMPORTANT: All hooks must be declared before any early returns to maintain hook order consistency
   const translateX = useTransform(
@@ -148,7 +148,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   const rotateZ = useTransform(
     scrollProgress,
     [0, animationStart, animationEnd],
-    [card.position.rotation, card.position.rotation, card.position.rotation * -1.08]
+    [card.position.rotation, card.position.rotation, 0]
   );
 
 
