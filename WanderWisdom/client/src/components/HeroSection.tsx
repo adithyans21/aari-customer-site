@@ -178,11 +178,12 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   return (
     <motion.div
       ref={cardRef}
-      className="absolute hidden lg:block z-20"
+      className="hidden lg:block z-20"
       style={{
-        top: card.position.top,
-        left: "left" in card.position ? card.position.left : undefined,
-        right: "right" in card.position ? card.position.right : undefined,
+        position: "fixed",
+        top: initialPagePos ? initialPagePos.y : card.position.top,
+        left: initialPagePos ? initialPagePos.x : ("left" in card.position ? card.position.left : undefined),
+        right: !initialPagePos && "right" in card.position ? card.position.right : undefined,
         x: translateX,
         y: translateY,
         scale,
