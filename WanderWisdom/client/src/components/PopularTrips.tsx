@@ -21,6 +21,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [dockedCards, setDockedCards] = useState<boolean[]>([false, false]);
+  const [showAllTripsModal, setShowAllTripsModal] = useState(false);
   
   const leftPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null]);
   const rightPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null]);
@@ -273,27 +274,6 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
             photos, and book your adventure.
           </p>
         </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-2 mt-8"
-        >
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-              className="transition-all"
-              data-testid={`button-filter-${category.toLowerCase()}`}
-            >
-              {category}
-            </Button>
-          ))}
-        </motion.div>
       </div>
 
       <motion.div 
@@ -371,6 +351,97 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
           </motion.div>
         </div>
       </motion.div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="flex justify-center mt-12"
+      >
+        <Button 
+          onClick={() => setShowAllTripsModal(true)}
+          size="lg"
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        >
+          View All Trips
+        </Button>
+      </motion.div>
+
+      <Dialog open={showAllTripsModal} onOpenChange={setShowAllTripsModal}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-3xl font-bold mb-4">All Trips</h2>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className="transition-all"
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {popularTrips
+                .filter(trip => selectedCategory === "All" || trip.category === selectedCategory)
+                .map((trip) => (
+                  <motion.div
+                    key={trip.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    onClick={() => {
+                      setSelectedTrip(trip);
+                      setActiveImageIndex(0);
+                      setShowAllTripsModal(false);
+                    }}
+                    className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-full cursor-pointer flex flex-col h-64"
+                  >
+                    <div className="relative h-32 overflow-hidden">
+                      <img 
+                        src={trip.image}
+                        alt={trip.title}
+                        className="w-full h-full object-cover hover:scale-105 transition-transform"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                      <Badge 
+                        variant="secondary" 
+                        className="absolute top-1 left-1 bg-white/90 text-gray-800 text-xs"
+                      >
+                        {trip.category}
+                      </Badge>
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm line-clamp-1">{trip.title}</p>
+                        <p className="text-xs text-gray-600 flex items-center gap-1 mt-1">
+                          <MapPin className="w-2.5 h-2.5" />
+                          {trip.location}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                          <span className="text-xs font-semibold text-gray-900">{trip.rating}</span>
+                        </div>
+                        <span className="text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                          ₹{trip.price}
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!selectedTrip} onOpenChange={() => setSelectedTrip(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
