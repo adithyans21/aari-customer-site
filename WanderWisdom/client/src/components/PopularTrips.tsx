@@ -220,7 +220,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
     side: 'left' | 'right'; 
     index: number;
   }) => {
-    const cardIndex = side === 'left' ? index : index + 4;
+    const cardIndex = side === 'left' ? 0 : 1;
     const isDocked = dockedCards[cardIndex];
     const trip = popularTrips[cardIndex];
 
