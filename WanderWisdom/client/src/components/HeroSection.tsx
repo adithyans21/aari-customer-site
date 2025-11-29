@@ -266,7 +266,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       ))}
 
       {/* Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 w-full justify-between px-6 pointer-events-none" style={{ top: "35%" }}>
+      <div className="absolute hidden lg:flex gap-8 w-full justify-between px-6 pointer-events-none z-30" style={{ top: "35%" }}>
         {/* Left Review */}
         {reviews[0] && (
           <motion.div 
