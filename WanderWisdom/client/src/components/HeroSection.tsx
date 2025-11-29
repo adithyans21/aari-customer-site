@@ -162,13 +162,13 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
       ref={cardRef}
       initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
       animate={{ 
-        opacity: hasEnteredView ? 1 : 0, 
-        scale: hasEnteredView ? 1 : 0.6, 
-        y: hasEnteredView ? 0 : 40, 
-        rotate: hasEnteredView ? card.position.rotation : 0, 
-        x: hasEnteredView ? 0 : (card.side === "left" ? -100 : 100) 
+        opacity: 1, 
+        scale: 1, 
+        y: 0, 
+        rotate: card.position.rotation, 
+        x: 0
       }}
-      transition={hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
+      transition={!hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
       onAnimationComplete={() => !hasEnteredView && setHasEnteredView(true)}
       className="absolute hidden lg:block z-20 pointer-events-none"
       style={{
