@@ -62,7 +62,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   
   const { scrollY } = useScroll();
   
-  const sideIndex = card.side === "left" ? card.heroIdx : card.heroIdx - 4;
+  const sideIndex = 0;
   const sidePositions = placeholderPositions[card.side] || [];
   const targetPlaceholder = sidePositions[sideIndex] || null;
 
@@ -101,8 +101,8 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
     return () => window.removeEventListener('resize', recaptureOnResize);
   }, [hasEnteredView]);
 
-  const animationStart = 0.1 + sideIndex * 0.02;
-  const animationEnd = 0.5 + sideIndex * 0.02;
+  const animationStart = 0.1 + card.heroIdx * 0.05;
+  const animationEnd = 0.5 + card.heroIdx * 0.05;
 
   useMotionValueEvent(scrollProgress, "change", (latest) => {
     const hasRequiredData = !!initialPagePos && !!targetPlaceholder;
@@ -125,9 +125,6 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const deltaX = hasValidPositions ? targetPlaceholder.left - initialPagePos.x : 0;
   const deltaY = hasValidPositions ? targetPlaceholder.top - initialPagePos.y : 0;
-  const targetScaleX = hasValidPositions ? targetPlaceholder.width / initialPagePos.width : 1;
-  const targetScaleY = hasValidPositions ? targetPlaceholder.height / initialPagePos.height : 1;
-  const targetScale = Math.min(targetScaleX, targetScaleY);
 
   const translateX = useTransform(
     scrollProgress,
@@ -144,7 +141,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   const scale = useTransform(
     scrollProgress,
     [0, animationStart, animationEnd, 1],
-    [1, 1, targetScale, targetScale]
+    [1, 1, 1, 1]
   );
 
   const rotateZ = useTransform(
