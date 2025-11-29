@@ -263,9 +263,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Left Review */}
         {reviews[0] && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
+            initial={{ opacity: 0, scale: 0.6, y: 40, x: -50 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{ rotate: 3 }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
@@ -287,9 +287,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Right Review */}
         {reviews[1] && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
+            initial={{ opacity: 0, scale: 0.6, y: 40, x: 50 }}
+            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.8, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{ rotate: -3 }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
@@ -314,9 +314,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Left Overlapping Review */}
         {reviews[2] && (
           <motion.div 
-            initial={{ opacity: 0, rotate: 5 }}
-            animate={{ opacity: 1, rotate: 5 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
+            initial={{ opacity: 0, rotate: 5, scale: 0.6, y: 40, x: -50 }}
+            animate={{ opacity: 1, rotate: 5, scale: 1, y: 0, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.9, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{}}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
@@ -338,9 +338,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Right Overlapping Review */}
         {reviews[3] && (
           <motion.div 
-            initial={{ opacity: 0, rotate: -5 }}
-            animate={{ opacity: 1, rotate: -5 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
+            initial={{ opacity: 0, rotate: -5, scale: 0.6, y: 40, x: 50 }}
+            animate={{ opacity: 1, rotate: -5, scale: 1, y: 0, x: 0 }}
+            transition={{ duration: 0.7, delay: 1.0, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{}}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
@@ -365,9 +365,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Left Invisible Review */}
         {reviews[4] && (
           <motion.div 
-            initial={{ opacity: 0, rotate: -5, x: -70, y: 60 }}
-            animate={{ opacity: 1, rotate: -5, x: -70, y: 60 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
+            initial={{ opacity: 0, rotate: -5, scale: 0.6, x: -120, y: 100 }}
+            animate={{ opacity: 1, rotate: -5, scale: 1, x: -70, y: 60 }}
+            transition={{ duration: 0.7, delay: 1.1, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{}}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
@@ -389,9 +389,9 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         {/* Right Invisible Review */}
         {reviews[5] && (
           <motion.div 
-            initial={{ opacity: 0, rotate: 5, x: 70, y: 60 }}
-            animate={{ opacity: 1, rotate: 5, x: 70, y: 60 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
+            initial={{ opacity: 0, rotate: 5, scale: 0.6, x: 120, y: 100 }}
+            animate={{ opacity: 1, rotate: 5, scale: 1, x: 70, y: 60 }}
+            transition={{ duration: 0.7, delay: 1.2, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{}}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
