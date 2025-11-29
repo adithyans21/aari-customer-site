@@ -273,7 +273,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
             transition={{ duration: 0.7, delay: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
             style={{ rotate: 3 }}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 border-l-4 border-l-purple-500 flex flex-col justify-between pointer-events-auto relative"
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border-2 border-purple-500 flex flex-col justify-between pointer-events-auto relative"
           >
             <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
               ⭐ Top Review
