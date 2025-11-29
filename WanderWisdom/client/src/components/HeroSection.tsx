@@ -266,14 +266,14 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       ))}
 
       {/* Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 w-full justify-between px-6 pointer-events-none z-30" style={{ top: "15%" }}>
+      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" style={{ top: "15%", width: "700px", justifyContent: "space-between" }}>
         {/* Left Review */}
         {reviews[0] && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            style={{ rotate: -3 }}
+            style={{ rotate: 3 }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
@@ -297,7 +297,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.8 }}
-            style={{ rotate: 3, marginLeft: "auto" }}
+            style={{ rotate: -3 }}
             className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
