@@ -49,6 +49,13 @@ Preferred communication style: Simple, everyday language.
 - AariLogo component for consistent branding across the application
 - Shared UI components from shadcn/ui library in `components/ui/` directory
 
+**Tour Card Specification (Standard Size)**
+- **Dimensions**: w-72 h-56 (288px × 224px)
+- **Image Height**: h-32 (128px)
+- **Used in**: Popular Trips middle column, left/right columns (third row), and hero section animated cards
+- **Content**: Image, category badge, title, location, rating, price
+- This is the canonical tour card size - use for consistency across all trip/tour displays
+
 **Animation & Interaction Design**
 - Scroll-progress-driven animations in hero section using Framer Motion's `useScroll` and `useSpring`
 - Staggered entrance animations for content sections using `whileInView` viewport detection
