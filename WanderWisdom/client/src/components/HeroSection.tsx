@@ -29,21 +29,22 @@ interface HeroCard {
 
 const getHeroCards = (): HeroCard[] => {
   const leftPositions = [
-    { top: "10%", left: "2%", rotation: 3 },
-    { top: "28%", left: "2%", rotation: -5 },
-    { top: "46%", left: "2%", rotation: 8 },
-    { top: "64%", left: "2%", rotation: -3 },
+    { top: "8%", left: "1%", rotation: 3 },
+    { top: "24%", left: "1%", rotation: -5 },
+    { top: "40%", left: "1%", rotation: 8 },
+    { top: "56%", left: "1%", rotation: -3 },
+    { top: "72%", left: "1%", rotation: 2 },
   ];
   
   const rightPositions = [
-    { top: "10%", right: "2%", rotation: -3 },
-    { top: "28%", right: "2%", rotation: 5 },
-    { top: "46%", right: "2%", rotation: -2 },
-    { top: "64%", right: "2%", rotation: 4 },
+    { top: "8%", right: "1%", rotation: -3 },
+    { top: "24%", right: "1%", rotation: 5 },
+    { top: "40%", right: "1%", rotation: -2 },
+    { top: "56%", right: "1%", rotation: 4 },
   ];
 
   return [
-    ...popularTrips.slice(0, 4).map((trip, idx) => ({
+    ...popularTrips.slice(0, 5).map((trip, idx) => ({
       ...trip,
       type: "trip",
       side: "left" as const,
@@ -51,13 +52,13 @@ const getHeroCards = (): HeroCard[] => {
       delay: idx * 0.15,
       heroIdx: idx,
     })),
-    ...popularTrips.slice(4, 8).map((trip, idx) => ({
+    ...popularTrips.slice(5, 9).map((trip, idx) => ({
       ...trip,
       type: "trip",
       side: "right" as const,
       position: rightPositions[idx],
       delay: 0.5 + idx * 0.15,
-      heroIdx: 4 + idx,
+      heroIdx: 5 + idx,
     })),
   ];
 };
@@ -218,8 +219,8 @@ function CardContent({ card }: { card: HeroCard }) {
       className="pointer-events-auto"
       whileHover={{ scale: 1.05, y: -4 }}
     >
-      <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72">
-        <div className="relative h-12 overflow-hidden">
+      <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 h-56 cursor-pointer flex flex-col">
+        <div className="relative h-32 overflow-hidden">
           <img 
             src={card.image}
             alt={card.title}
@@ -233,13 +234,15 @@ function CardContent({ card }: { card: HeroCard }) {
             {card.category}
           </Badge>
         </div>
-        <div className="p-2">
-          <p className="font-semibold text-gray-900 text-xs line-clamp-1">{card.title}</p>
-          <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
-            <MapPin className="w-2.5 h-2.5" />
-            {card.location}
-          </p>
-          <div className="flex items-center justify-between mt-1">
+        <div className="p-3 flex-1 flex flex-col justify-between">
+          <div>
+            <p className="font-semibold text-gray-900 text-sm line-clamp-1">{card.title}</p>
+            <p className="text-xs text-gray-600 flex items-center gap-1 mt-1">
+              <MapPin className="w-2.5 h-2.5" />
+              {card.location}
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
               <span className="text-xs font-semibold text-gray-900">{card.rating}</span>
