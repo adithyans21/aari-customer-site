@@ -126,6 +126,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   const deltaX = hasValidPositions ? targetPlaceholder.left - initialPagePos.x : 0;
   const deltaY = hasValidPositions ? targetPlaceholder.top - initialPagePos.y : 0;
 
+  // IMPORTANT: All hooks must be declared before any early returns to maintain hook order consistency
   const translateX = useTransform(
     scrollProgress,
     [0, animationStart, animationEnd, 1],
