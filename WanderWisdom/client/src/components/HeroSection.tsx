@@ -147,8 +147,8 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const rotateZ = useTransform(
     scrollProgress,
-    [0, animationStart, animationEnd, 1],
-    [card.position.rotation, card.position.rotation, 0, 0]
+    [animationStart - 0.05, animationEnd],
+    [card.position.rotation, 0]
   );
 
 
