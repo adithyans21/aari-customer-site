@@ -367,6 +367,57 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         )}
       </div>
 
+      {/* Slightly Invisible Review Cards Below */}
+      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "65%", width: "1400px", opacity: 0.3 }}>
+        {/* Left Invisible Review */}
+        {reviews[4] && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.1 }}
+            style={{ rotate: 5 }}
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+          >
+            <div>
+              <Quote className="w-4 h-4 text-purple-500 mb-2" />
+              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[4].quote}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-800">{reviews[4].author}</span>
+              <div className="flex gap-0.5">
+                {[...Array(reviews[4].rating)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Right Invisible Review */}
+        {reviews[5] && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+            style={{ rotate: -5 }}
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+          >
+            <div>
+              <Quote className="w-4 h-4 text-purple-500 mb-2" />
+              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[5].quote}</p>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-gray-800">{reviews[5].author}</span>
+              <div className="flex gap-0.5">
+                {[...Array(reviews[5].rating)].map((_, i) => (
+                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}

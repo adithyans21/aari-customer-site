@@ -438,6 +438,20 @@ export const reviews: Review[] = [
     rating: 5,
     quote: "Perfect evening walk with stunning views. Aari made the entire experience seamless!",
     trip: "Coaker's Walk"
+  },
+  {
+    id: 5,
+    author: "Maya S.",
+    rating: 5,
+    quote: "An unforgettable experience with Aari. Highly recommended for travelers!",
+    trip: "Forest Trek"
+  },
+  {
+    id: 6,
+    author: "Vikram R.",
+    rating: 5,
+    quote: "Amazing service and beautiful destinations. Coming back soon!",
+    trip: "Adventure Tour"
   }
 ];
 
