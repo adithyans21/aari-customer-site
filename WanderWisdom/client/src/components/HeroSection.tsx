@@ -240,6 +240,12 @@ interface HeroSectionProps {
 export default function HeroSection({ scrollProgress, placeholderPositions, heroSectionRef }: HeroSectionProps) {
   const heroCards = useMemo(() => getHeroCards(), []);
 
+  const reviewCardsOpacity = useTransform(
+    scrollProgress,
+    [0, 0.08, 0.15],
+    [1, 1, 0]
+  );
+
   return (
     <section ref={heroSectionRef} className="relative min-h-screen flex items-center justify-center overflow-visible">
       <div 
@@ -259,7 +265,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       ))}
 
       {/* Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" style={{ top: "15%", width: "1150px", justifyContent: "space-between" }}>
+      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" style={{ top: "15%", width: "1150px", justifyContent: "space-between", opacity: reviewCardsOpacity }}>
         {/* Left Review */}
         {reviews[0] && (
           <motion.div 
@@ -307,10 +313,10 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Overlapping Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "48%", width: "1400px" }}>
+      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "48%", width: "1400px", opacity: reviewCardsOpacity }}>
         {/* Left Overlapping Review */}
         {reviews[2] && (
           <motion.div 
@@ -358,10 +364,10 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
         )}
-      </div>
+      </motion.div>
 
       {/* Slightly Invisible Review Cards Below */}
-      <div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "65%", width: "1400px", opacity: 0.3 }}>
+      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "65%", width: "1400px", opacity: reviewCardsOpacity }}>
         {/* Left Invisible Review */}
         {reviews[4] && (
           <motion.div 
@@ -409,7 +415,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
         )}
-      </div>
+      </motion.div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
         <motion.div
