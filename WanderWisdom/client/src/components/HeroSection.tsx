@@ -153,8 +153,8 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const opacity = useTransform(
     scrollProgress,
-    [0, animationStart, animationEnd - 0.15, animationEnd],
-    [1, 1, 0.5, 0]
+    [0, animationStart, animationEnd - 0.15, animationEnd, 1],
+    [1, 1, 0.5, 0, 0]
   );
 
   return (
@@ -170,7 +170,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
       }}
       transition={hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
       onAnimationComplete={() => !hasEnteredView && setHasEnteredView(true)}
-      className="absolute hidden lg:block z-20"
+      className="absolute hidden lg:block z-20 pointer-events-none"
       style={{
         top: card.position.top,
         left: "left" in card.position ? card.position.left : undefined,
