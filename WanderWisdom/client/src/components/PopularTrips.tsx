@@ -234,7 +234,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
             rightPlaceholderRefs.current[index] = el;
           }
         }}
-        className="w-72 h-[76px] rounded-lg relative"
+        className="w-72 h-56 rounded-lg relative"
         data-placeholder={`${side}-${index}`}
       >
         <AnimatePresence>
