@@ -79,7 +79,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
       }
     };
     
-    const timer = setTimeout(capturePosition, 100 + card.delay * 1000);
+    const timer = setTimeout(capturePosition, 900 + card.delay * 200);
     
     return () => clearTimeout(timer);
   }, [hasEnteredView, card.delay]);
