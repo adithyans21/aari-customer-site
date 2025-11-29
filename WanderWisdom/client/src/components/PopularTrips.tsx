@@ -167,19 +167,18 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
   const DockedCard = ({ trip }: { trip: Trip }) => {
     return (
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={{ duration: 0.2 }}
-        whileHover={{ scale: 1.05, y: -4 }}
         onClick={() => {
           setSelectedTrip(trip);
           setActiveImageIndex(0);
         }}
-        className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 cursor-pointer flex flex-col"
+        className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 h-56 cursor-pointer flex flex-col"
         data-testid={`card-docked-${trip.id}`}
       >
-        <div className="relative h-12 overflow-hidden">
+        <div className="relative h-32 overflow-hidden">
           <img 
             src={trip.image}
             alt={trip.title}
@@ -193,13 +192,15 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
             {trip.category}
           </Badge>
         </div>
-        <div className="p-2">
-          <p className="font-semibold text-gray-900 text-xs line-clamp-1">{trip.title}</p>
-          <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
-            <MapPin className="w-2.5 h-2.5" />
-            {trip.location}
-          </p>
-          <div className="flex items-center justify-between mt-1">
+        <div className="p-3 flex-1 flex flex-col justify-between">
+          <div>
+            <p className="font-semibold text-gray-900 text-sm line-clamp-1">{trip.title}</p>
+            <p className="text-xs text-gray-600 flex items-center gap-1 mt-1">
+              <MapPin className="w-2.5 h-2.5" />
+              {trip.location}
+            </p>
+          </div>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
               <span className="text-xs font-semibold text-gray-900">{trip.rating}</span>
