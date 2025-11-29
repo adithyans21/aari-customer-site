@@ -317,7 +317,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       </div>
 
       {/* Overlapping Review Cards */}
-      <div className="absolute hidden lg:flex gap-8 w-full justify-between px-6 pointer-events-none z-30" style={{ top: "48%", left: 0, right: 0 }}>
+      <div className="absolute hidden lg:flex gap-8 w-full justify-between pointer-events-none z-30" style={{ top: "48%", left: 0, right: 0, paddingLeft: "80px", paddingRight: "80px" }}>
         {/* Left Overlapping Review */}
         {reviews[2] && (
           <motion.div 
@@ -325,7 +325,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.9 }}
             style={{ rotate: -5 }}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto ml-auto mr-auto"
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
               <Quote className="w-4 h-4 text-purple-500 mb-2" />
@@ -349,7 +349,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 1.0 }}
             style={{ rotate: 5 }}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto ml-auto mr-auto"
+            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
           >
             <div>
               <Quote className="w-4 h-4 text-purple-500 mb-2" />
