@@ -151,11 +151,6 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
     [card.position.rotation, card.position.rotation, 0]
   );
 
-  const opacity = useTransform(
-    scrollProgress,
-    [0, animationStart, animationEnd - 0.05, animationEnd],
-    [1, 1, 0.1, 0]
-  );
 
   return (
     <motion.div
@@ -179,7 +174,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
         y: hasEnteredView ? translateY : 0,
         scale: hasEnteredView ? scale : 1,
         rotateZ: hasEnteredView ? rotateZ : card.position.rotation,
-        opacity: hasEnteredView ? opacity : 1,
+        opacity: 1,
       }}
       data-testid={`card-hero-${card.heroIdx}`}
     >
