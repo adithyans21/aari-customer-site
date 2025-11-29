@@ -1,79 +1,48 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { 
   MapPin, Clock, Star, Users,
-  ChevronLeft, ChevronRight, Heart,
+  ChevronLeft, ChevronRight,
   Camera, Mountain, Utensils, TreePine, Calendar
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useTransform, MotionValue } from "framer-motion";
 import { popularTrips, Trip, categories } from "@shared/trips";
 
-const getCategoryIcon = (category: string) => {
-  switch (category) {
-    case "Adventure": return Mountain;
-    case "Food & Culture": return Utensils;
-    case "Nature": return TreePine;
-    default: return Camera;
-  }
-};
+interface PopularTripsProps {
+  scrollProgress: MotionValue<number>;
+  onPlaceholderPositionsChange: (positions: { left: DOMRect[]; right: DOMRect[] }) => void;
+  popularTripsRef: React.RefObject<HTMLDivElement>;
+}
 
-export default function PopularTrips() {
+export default function PopularTrips({ scrollProgress, onPlaceholderPositionsChange, popularTripsRef }: PopularTripsProps) {
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isLiked, setIsLiked] = useState<number[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
+  
+  const leftPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null]);
+  const rightPlaceholderRefs = useRef<(HTMLDivElement | null)[]>([null, null, null, null]);
+
+  const updatePlaceholderPositions = useCallback(() => {
+    const leftPositions = leftPlaceholderRefs.current.map(ref => 
+      ref ? ref.getBoundingClientRect() : new DOMRect()
+    );
+    const rightPositions = rightPlaceholderRefs.current.map(ref => 
+      ref ? ref.getBoundingClientRect() : new DOMRect()
+    );
+    onPlaceholderPositionsChange({ left: leftPositions, right: rightPositions });
+  }, [onPlaceholderPositionsChange]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const progress = Math.max(0, Math.min(1, 1 - rect.top / window.innerHeight));
-      setScrollProgress(progress);
+    updatePlaceholderPositions();
+    const timeout = setTimeout(updatePlaceholderPositions, 100);
+    window.addEventListener('resize', updatePlaceholderPositions);
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('resize', updatePlaceholderPositions);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Middle column cards: trips 3, 4, 5 (indices 1, 4, 7 in 3x3 grid)
-  const middleColumnTrips = [
-    popularTrips[3],  // grid position 1 (row 0, col 1)
-    popularTrips[4],  // grid position 4 (row 1, col 1)
-    popularTrips[5],  // grid position 7 (row 2, col 1)
-  ];
-
-  // Hero cards that will animate in: trips 0-2 (left) and 3-5... wait, that's wrong
-  // Hero has trips 0-2 (left) and 3-5 (right)
-  // But middle column is trips 3-5
-  // So the grid should have trips 0-8, middle column is 3,4,5
-  // Left column (0,3,6) should be filled by Hero trips 0-2
-  // Right column (2,5,8) should be filled by Hero trips 3-5
-  // But wait, trip 3,4,5 are in middle column
-  
-  // Let me reconsider: Hero has the first 6 trips
-  // Popular trips grid has 9 trips (0-8)
-  // Middle column should show trips 6, 7, 8
-  // Left column (0, 3, 6) filled by Hero trips 0, 1, 2
-  // Right column (2, 5, 8) filled by Hero trips 3, 4, 5
-  // But then middle would need (1, 4, 7) which are trips 1, 4, 7
-  
-  // Actually, let me follow user's exact requirement:
-  // Middle column visible: positions 1, 4, 7
-  // Left column empty (will animate in): positions 0, 3, 6
-  // Right column empty (will animate in): positions 2, 5, 8
-  // So middle column shows trips at indices 1, 4, 7
-
-  const toggleLike = (tripId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsLiked(prev => 
-      prev.includes(tripId) 
-        ? prev.filter(id => id !== tripId)
-        : [...prev, tripId]
-    );
-  };
+  }, [updatePlaceholderPositions]);
 
   const CardComponent = ({ trip, gridIndex }: { trip: Trip; gridIndex: number }) => {
     return (
@@ -167,20 +136,96 @@ export default function PopularTrips() {
     );
   };
 
-  // Render grid with only middle column visible initially
-  // Grid positions: 0 1 2 | 3 4 5 | 6 7 8
-  // Middle column: positions 1, 4, 7
-  // These correspond to popularTrips indices 1, 4, 7
-  const gridItems = Array(9).fill(null).map((_, idx) => {
-    const colIndex = idx % 3;
-    const isMiddleCol = colIndex === 1;
-    const trip = isMiddleCol ? popularTrips[idx] : null;
+  const AnimatedPlaceholder = ({ 
+    side, 
+    index 
+  }: { 
+    side: 'left' | 'right'; 
+    index: number;
+  }) => {
+    const animationStart = 0.3 + index * 0.05;
+    const animationEnd = 0.7 + index * 0.05;
 
-    return { trip, isMiddleCol, gridIndex: idx };
-  });
+    const placeholderOpacity = useTransform(
+      scrollProgress,
+      [0, animationStart, animationEnd, 1],
+      [0.3, 0.3, 0, 0]
+    );
+
+    const cardOpacity = useTransform(
+      scrollProgress,
+      [0, animationStart, animationEnd, 1],
+      [0, 0, 1, 1]
+    );
+
+    const cardScale = useTransform(
+      scrollProgress,
+      [animationStart, animationEnd],
+      [0.9, 1]
+    );
+
+    const tripIndex = side === 'left' ? index : index + 4;
+    const trip = popularTrips[tripIndex];
+
+    return (
+      <div className="relative w-72 h-20">
+        <motion.div
+          ref={(el) => {
+            if (side === 'left') {
+              leftPlaceholderRefs.current[index] = el;
+            } else {
+              rightPlaceholderRefs.current[index] = el;
+            }
+          }}
+          style={{ opacity: placeholderOpacity }}
+          className="absolute inset-0 bg-muted/30 rounded-lg border border-dashed border-primary/20"
+        />
+        {trip && (
+          <motion.div
+            style={{ opacity: cardOpacity, scale: cardScale }}
+            className="absolute inset-0"
+            whileHover={{ scale: 1.05, y: -4 }}
+            onClick={() => {
+              setSelectedTrip(trip);
+              setActiveImageIndex(0);
+            }}
+          >
+            <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 h-20 cursor-pointer flex flex-col">
+              <div className="relative h-8 overflow-hidden">
+                <img 
+                  src={trip.image}
+                  alt={trip.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                <Badge 
+                  variant="secondary" 
+                  className="absolute top-0.5 left-0.5 bg-white/90 text-gray-800 text-xs"
+                >
+                  {trip.category}
+                </Badge>
+              </div>
+              <div className="p-1 flex-1 flex flex-col justify-between">
+                <p className="font-semibold text-gray-900 text-xs line-clamp-1">{trip.title}</p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                    <span className="text-xs font-semibold text-gray-900">{trip.rating}</span>
+                  </div>
+                  <span className="text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                    ₹{trip.price}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    );
+  };
 
   return (
-    <section id="popular-trips" className="py-16 lg:py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/20 to-background" ref={containerRef}>
+    <section id="popular-trips" className="py-16 lg:py-24 relative overflow-hidden bg-gradient-to-b from-background via-muted/20 to-background" ref={popularTripsRef}>
       <div className="absolute top-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       
@@ -255,35 +300,10 @@ export default function PopularTrips() {
             <div className="flex gap-8 items-start">
               {/* Left column - 7 cards */}
               <div className="flex flex-col gap-2 h-full">
-                {/* 4 empty placeholders (will be filled by hero cards on scroll) */}
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
+                {/* 4 animated placeholders (will show cards on scroll) */}
+                {[0, 1, 2, 3].map((index) => (
+                  <AnimatedPlaceholder key={`left-${index}`} side="left" index={index} />
+                ))}
                 {/* 3 actual cards - pushed to bottom */}
                 <div className="flex flex-col gap-2 mt-auto">
                   {[8, 9, 10].map((idx) => {
@@ -307,35 +327,10 @@ export default function PopularTrips() {
               
               {/* Right column - 7 cards */}
               <div className="flex flex-col gap-2 h-full">
-                {/* 4 empty placeholders (will be filled by hero cards on scroll) */}
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
-                <motion.div
-                  animate={{
-                    opacity: scrollProgress > 0.3 ? 0.1 : 0,
-                  }}
-                  transition={{ duration: 0.5 }}
-                  className="w-72 h-20 bg-muted/30 rounded-lg border border-dashed border-primary/20"
-                />
+                {/* 4 animated placeholders (will show cards on scroll) */}
+                {[0, 1, 2, 3].map((index) => (
+                  <AnimatedPlaceholder key={`right-${index}`} side="right" index={index} />
+                ))}
                 {/* 3 actual cards - pushed to bottom */}
                 <div className="flex flex-col gap-2 mt-auto">
                   {[11, 12, 13].map((idx) => {

@@ -1,13 +1,33 @@
+import { useRef, useEffect, useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, MapPin, MessageCircle, Clock, Star } from "lucide-react";
-import { motion } from "framer-motion";
+import { Sparkles, MapPin, MessageCircle, Star } from "lucide-react";
+import { motion, useTransform, useSpring, MotionValue } from "framer-motion";
 import heroImage from "@assets/generated_images/kodaikanal_landscape_sunset_view.png";
 import AariLogo from "./AariLogo";
 import { popularTrips } from "@shared/trips";
 
-// 4 cards on each side for hero animation
-const getHeroCards = () => {
+interface HeroCard {
+  id: number;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  image: string;
+  category: string;
+  type: string;
+  side: "left" | "right";
+  position: {
+    top: string;
+    left?: string;
+    right?: string;
+    rotation: number;
+  };
+  delay: number;
+  heroIdx: number;
+}
+
+const getHeroCards = (): HeroCard[] => {
   const leftPositions = [
     { top: "10%", left: "2%", rotation: 3 },
     { top: "28%", left: "2%", rotation: -5 },
@@ -42,11 +62,112 @@ const getHeroCards = () => {
   ];
 };
 
-export default function HeroSection() {
-  const heroCards = getHeroCards();
+interface AnimatedHeroCardProps {
+  card: HeroCard;
+  scrollProgress: MotionValue<number>;
+  placeholderPositions: { left: DOMRect[]; right: DOMRect[] };
+}
+
+function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: AnimatedHeroCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  
+  const sideIndex = card.side === "left" ? card.heroIdx : card.heroIdx - 4;
+  const sidePositions = placeholderPositions[card.side] || [];
+  const targetPlaceholder = sidePositions[sideIndex] || null;
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const animationStart = 0.3 + sideIndex * 0.05;
+  const animationEnd = 0.7 + sideIndex * 0.05;
+
+  const opacity = useTransform(
+    scrollProgress,
+    [0, animationStart * 0.5, animationStart, animationEnd],
+    [1, 1, 0.8, 0]
+  );
+
+  const scale = useTransform(
+    scrollProgress,
+    [0, animationStart, animationEnd],
+    [1, 1, 0.9]
+  );
+
+  const rotateZ = useTransform(
+    scrollProgress,
+    [0, animationEnd],
+    [card.position.rotation, 0]
+  );
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
+      animate={{ opacity: 1, scale: 1, y: 0, rotate: card.position.rotation, x: 0 }}
+      transition={{ delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
+      whileHover={{ scale: 1.05, y: -4 }}
+      className={`absolute hidden lg:block pointer-events-none z-20`}
+      style={{
+        top: card.position.top,
+        left: "left" in card.position ? card.position.left : undefined,
+        right: "right" in card.position ? card.position.right : undefined,
+        opacity,
+        scale,
+        rotateZ,
+      }}
+      data-testid={`card-hero-${card.heroIdx}`}
+    >
+      <motion.div className="pointer-events-auto">
+        <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72">
+          <div className="relative h-12 overflow-hidden">
+            <img 
+              src={card.image}
+              alt={card.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            <Badge 
+              variant="secondary" 
+              className="absolute top-1 left-1 bg-white/90 text-gray-800 text-xs"
+            >
+              {card.category}
+            </Badge>
+          </div>
+          <div className="p-2">
+            <p className="font-semibold text-gray-900 text-xs line-clamp-1">{card.title}</p>
+            <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
+              <MapPin className="w-2.5 h-2.5" />
+              {card.location}
+            </p>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center gap-1">
+                <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-semibold text-gray-900">{card.rating}</span>
+              </div>
+              <span className="text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                ₹{card.price}
+              </span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+interface HeroSectionProps {
+  scrollProgress: MotionValue<number>;
+  placeholderPositions: { left: DOMRect[]; right: DOMRect[] };
+  heroSectionRef: React.RefObject<HTMLDivElement>;
+}
+
+export default function HeroSection({ scrollProgress, placeholderPositions, heroSectionRef }: HeroSectionProps) {
+  const heroCards = useMemo(() => getHeroCards(), []);
+
+  return (
+    <section ref={heroSectionRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${heroImage})` }}
@@ -54,59 +175,13 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60" />
       <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-purple-900/20" />
       
-      {/* Floating Cards - Popular Trips - Sequential Animation */}
       {heroCards.map((card) => (
-        <motion.div
+        <AnimatedHeroCard
           key={`${card.id}-${card.side}`}
-          initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
-          animate={{ opacity: 1, scale: 1, y: 0, rotate: card.position.rotation, x: 0 }}
-          transition={{ delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
-          whileHover={{ scale: 1.05, y: -4 }}
-          className={`absolute hidden lg:block pointer-events-none z-20`}
-          style={{
-            top: card.position.top,
-            left: "left" in card.position ? card.position.left : undefined,
-            right: "right" in card.position ? card.position.right : undefined,
-          }}
-          data-testid={`card-hero-${card.heroIdx}`}
-        >
-          <motion.div className="pointer-events-auto">
-            {card.type === "trip" && (
-              <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72">
-                <div className="relative h-12 overflow-hidden">
-                  <img 
-                    src={card.image}
-                    alt={card.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                  <Badge 
-                    variant="secondary" 
-                    className="absolute top-1 left-1 bg-white/90 text-gray-800 text-xs"
-                  >
-                    {card.category}
-                  </Badge>
-                </div>
-                <div className="p-2">
-                  <p className="font-semibold text-gray-900 text-xs line-clamp-1">{card.title}</p>
-                  <p className="text-xs text-gray-600 flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-2.5 h-2.5" />
-                    {card.location}
-                  </p>
-                  <div className="flex items-center justify-between mt-1">
-                    <div className="flex items-center gap-1">
-                      <Star className="w-2.5 h-2.5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-xs font-semibold text-gray-900">{card.rating}</span>
-                    </div>
-                    <span className="text-xs font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                      ₹{card.price}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            )}
-          </motion.div>
-        </motion.div>
+          card={card}
+          scrollProgress={scrollProgress}
+          placeholderPositions={placeholderPositions}
+        />
       ))}
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
