@@ -223,8 +223,6 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
     index: number;
   }) => {
     const cardIndex = side === 'left' ? 0 : 1;
-    const isDocked = dockedCards[cardIndex];
-    const trip = popularTrips[cardIndex];
 
     return (
       <div 
@@ -238,11 +236,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
         className="w-72 h-56 rounded-lg relative"
         data-placeholder={`${side}-${index}`}
       >
-        <AnimatePresence>
-          {isDocked && trip && (
-            <DockedCard trip={trip} />
-          )}
-        </AnimatePresence>
+        {/* Placeholder for hero cards to dock - no card rendered here */}
       </div>
     );
   };
