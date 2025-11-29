@@ -424,6 +424,20 @@ export const reviews: Review[] = [
     rating: 5,
     quote: "Best trek ever! The pine forest views are breathtaking and our guide was fantastic.",
     trip: "Pine Forest Trek"
+  },
+  {
+    id: 3,
+    author: "Priya D.",
+    rating: 5,
+    quote: "Pillar Rocks sunrise was absolutely unforgettable. Worth every second of the early morning!",
+    trip: "Pillar Rocks Sunrise"
+  },
+  {
+    id: 4,
+    author: "Arjun P.",
+    rating: 5,
+    quote: "Perfect evening walk with stunning views. Aari made the entire experience seamless!",
+    trip: "Coaker's Walk"
   }
 ];
 
