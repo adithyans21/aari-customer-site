@@ -157,40 +157,29 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
     [1, 1, 1, 0]
   );
 
-  if (!hasEnteredView) {
-    return (
-      <motion.div
-        ref={cardRef}
-        initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
-        animate={{ opacity: 1, scale: 1, y: 0, rotate: card.position.rotation, x: 0 }}
-        transition={{ delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
-        onAnimationComplete={() => setHasEnteredView(true)}
-        className="absolute hidden lg:block z-20"
-        style={{
-          top: card.position.top,
-          left: "left" in card.position ? card.position.left : undefined,
-          right: "right" in card.position ? card.position.right : undefined,
-        }}
-        data-testid={`card-hero-${card.heroIdx}`}
-      >
-        <CardContent card={card} />
-      </motion.div>
-    );
-  }
-
   return (
     <motion.div
       ref={cardRef}
+      initial={{ opacity: 0, scale: 0.6, y: 40, rotate: 0, x: card.side === "left" ? -100 : 100 }}
+      animate={{ 
+        opacity: hasEnteredView ? 1 : 0, 
+        scale: hasEnteredView ? 1 : 0.6, 
+        y: hasEnteredView ? 0 : 40, 
+        rotate: hasEnteredView ? card.position.rotation : 0, 
+        x: hasEnteredView ? 0 : (card.side === "left" ? -100 : 100) 
+      }}
+      transition={hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
+      onAnimationComplete={() => !hasEnteredView && setHasEnteredView(true)}
       className="absolute hidden lg:block z-20"
       style={{
         top: card.position.top,
         left: "left" in card.position ? card.position.left : undefined,
         right: "right" in card.position ? card.position.right : undefined,
-        x: translateX,
-        y: translateY,
-        scale,
-        rotateZ,
-        opacity,
+        x: hasEnteredView ? translateX : 0,
+        y: hasEnteredView ? translateY : 0,
+        scale: hasEnteredView ? scale : 1,
+        rotateZ: hasEnteredView ? rotateZ : card.position.rotation,
+        opacity: hasEnteredView ? opacity : 1,
       }}
       data-testid={`card-hero-${card.heroIdx}`}
     >
