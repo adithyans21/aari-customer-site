@@ -63,8 +63,7 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
 
   useMotionValueEvent(scrollProgress, "change", (latest) => {
     const newDockedCards = dockedCards.map((_, idx) => {
-      const sideIndex = idx < 4 ? idx : idx - 4;
-      const animationEnd = 0.5 + sideIndex * 0.02;
+      const animationEnd = 0.5 + idx * 0.05;
       return latest >= animationEnd;
     });
     

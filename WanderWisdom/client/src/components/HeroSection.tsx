@@ -199,7 +199,6 @@ function CardContent({ card }: { card: HeroCard }) {
   return (
     <motion.div 
       className="pointer-events-auto"
-      whileHover={{ scale: 1.05, y: -4 }}
     >
       <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 h-56 cursor-pointer flex flex-col">
         <div className="relative h-32 overflow-hidden">
