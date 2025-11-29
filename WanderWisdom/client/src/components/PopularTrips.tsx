@@ -8,7 +8,8 @@ import {
   Camera, Mountain, Utensils, TreePine, Calendar
 } from "lucide-react";
 import { motion, AnimatePresence, useTransform, MotionValue, useMotionValueEvent } from "framer-motion";
-import { popularTrips, Trip, categories } from "@shared/trips";
+import { popularTrips, Trip, categories, reviews } from "@shared/trips";
+import { Quote } from "lucide-react";
 
 interface PopularTripsProps {
   scrollProgress: MotionValue<number>;
@@ -302,6 +303,29 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
             <div className="flex gap-8 items-start">
               {/* Left column */}
               <div className="flex flex-col gap-4">
+                {reviews[0] && (
+                  <motion.div 
+                    initial={{ opacity: 0, rotateZ: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{ transformOrigin: "right center", rotate: -3 }}
+                    className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between"
+                  >
+                    <div>
+                      <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                      <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[0].quote}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-gray-800">{reviews[0].author}</span>
+                      <div className="flex gap-0.5">
+                        {[...Array(reviews[0].rating)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 {[0].map((index) => (
                   <Placeholder key={`left-${index}`} side="left" index={index} />
                 ))}
@@ -331,6 +355,29 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
               
               {/* Right column */}
               <div className="flex flex-col gap-4">
+                {reviews[1] && (
+                  <motion.div 
+                    initial={{ opacity: 0, rotateZ: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{ transformOrigin: "left center", rotate: 3 }}
+                    className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between"
+                  >
+                    <div>
+                      <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                      <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[1].quote}</p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-gray-800">{reviews[1].author}</span>
+                      <div className="flex gap-0.5">
+                        {[...Array(reviews[1].rating)].map((_, i) => (
+                          <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 {[0].map((index) => (
                   <Placeholder key={`right-${index}`} side="right" index={index} />
                 ))}

@@ -17,6 +17,14 @@ export interface Trip {
   itinerary: { time: string; activity: string }[];
 }
 
+export interface Review {
+  id: number;
+  author: string;
+  rating: number;
+  quote: string;
+  trip: string;
+}
+
 export const popularTrips: Trip[] = [
   {
     id: 1,
@@ -400,6 +408,23 @@ export const popularTrips: Trip[] = [
       { time: "12:30 PM", activity: "Return to base" },
     ],
   },
+];
+
+export const reviews: Review[] = [
+  {
+    id: 1,
+    author: "Sarah M.",
+    rating: 5,
+    quote: "Absolutely magical! The lake boating experience exceeded all my expectations.",
+    trip: "Kodaikanal Lake Boating"
+  },
+  {
+    id: 2,
+    author: "Rajesh K.",
+    rating: 5,
+    quote: "Best trek ever! The pine forest views are breathtaking and our guide was fantastic.",
+    trip: "Pine Forest Trek"
+  }
 ];
 
 export const categories = [
