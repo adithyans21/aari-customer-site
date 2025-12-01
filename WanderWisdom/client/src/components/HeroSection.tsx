@@ -165,7 +165,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
       }}
       transition={!hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
       onAnimationComplete={() => !hasEnteredView && setHasEnteredView(true)}
-      className="absolute hidden lg:block z-20 pointer-events-none"
+      className="absolute hidden lg:block z-10 pointer-events-none"
       style={{
         top: card.position.top,
         left: "left" in card.position ? card.position.left : undefined,
