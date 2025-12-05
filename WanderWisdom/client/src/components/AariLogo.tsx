@@ -1,4 +1,4 @@
-import logoImage from "@assets/image_1764339157782.png";
+import logoImage from "../../public/aari-lite-bg.png";
 
 interface AariLogoProps {
   className?: string;

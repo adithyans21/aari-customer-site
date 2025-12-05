@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState, useMemo, useLayoutEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, MapPin, MessageCircle, Star, Quote } from "lucide-react";
-import { motion, useTransform, MotionValue, useMotionValueEvent, useScroll } from "framer-motion";
-import heroImage from "@assets/generated_images/kodaikanal_landscape_sunset_view.png";
+import { Sparkles, MapPin, MessageCircle, Star, Quote, ThumbsUp } from "lucide-react";
+import { motion, useTransform, MotionValue, useMotionValueEvent, useScroll, useMotionValue } from "framer-motion";
+import heroImage from "../assets/kodaikanal_landscape_sunset_view.png";
 import AariLogo from "./AariLogo";
 import { popularTrips, reviews } from "@shared/trips";
 
@@ -33,7 +33,8 @@ const getHeroCards = (): HeroCard[] => {
       ...popularTrips[0],
       type: "trip",
       side: "left" as const,
-      position: { top: "30%", left: "2%", rotation: -5 },
+      // Left at 5% as requested (Do not touch)
+      position: { top: "30%", left: "5%", rotation: -5 },
       delay: 0,
       heroIdx: 0,
     },
@@ -41,7 +42,8 @@ const getHeroCards = (): HeroCard[] => {
       ...popularTrips[1],
       type: "trip",
       side: "right" as const,
-      position: { top: "30%", right: "2%", rotation: 5 },
+      // Left at 5% as requested (Do not touch)
+      position: { top: "30%", right: "5%", rotation: 5 },
       delay: 0.15,
       heroIdx: 1,
     },
@@ -66,37 +68,29 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
   const sidePositions = placeholderPositions[card.side] || [];
   const targetPlaceholder = sidePositions[sideIndex] || null;
 
+  const capturePosition = () => {
+    if (cardRef.current && hasEnteredView) {
+      const rect = cardRef.current.getBoundingClientRect();
+      setInitialPagePos({
+        x: rect.left + window.scrollX,
+        y: rect.top + window.scrollY,
+        width: rect.width,
+        height: rect.height,
+      });
+    }
+  };
+
   useLayoutEffect(() => {
-    const capturePosition = () => {
-      if (cardRef.current && hasEnteredView) {
-        const rect = cardRef.current.getBoundingClientRect();
-        setInitialPagePos({
-          x: rect.left + window.scrollX,
-          y: rect.top + window.scrollY,
-          width: rect.width,
-          height: rect.height,
-        });
-      }
-    };
-    
     const timer = setTimeout(capturePosition, 900 + card.delay * 200);
-    
     return () => clearTimeout(timer);
   }, [hasEnteredView, card.delay]);
 
   useEffect(() => {
     const recaptureOnResize = () => {
-      if (cardRef.current && hasEnteredView && window.scrollY < 100) {
-        const rect = cardRef.current.getBoundingClientRect();
-        setInitialPagePos({
-          x: rect.left + window.scrollX,
-          y: rect.top + window.scrollY,
-          width: rect.width,
-          height: rect.height,
-        });
+      if (cardRef.current && hasEnteredView && window.scrollY < 50) {
+        capturePosition();
       }
     };
-
     window.addEventListener('resize', recaptureOnResize);
     return () => window.removeEventListener('resize', recaptureOnResize);
   }, [hasEnteredView]);
@@ -106,11 +100,7 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   useMotionValueEvent(scrollProgress, "change", (latest) => {
     const hasRequiredData = !!initialPagePos && !!targetPlaceholder;
-    
-    if (!hasRequiredData) {
-      if (animationPhase !== 'hero') setAnimationPhase('hero');
-      return;
-    }
+    if (!hasRequiredData) return;
     
     if (latest < animationStart) {
       if (animationPhase !== 'hero') setAnimationPhase('hero');
@@ -123,10 +113,21 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const hasValidPositions = initialPagePos && targetPlaceholder && targetPlaceholder.width > 0;
 
-  const deltaX = hasValidPositions ? targetPlaceholder.left - initialPagePos.x - 20 : 0;
-  const deltaY = hasValidPositions ? targetPlaceholder.top - initialPagePos.y - 40 : 0;
+  let deltaX = 0;
+  let deltaY = 0;
 
-  // IMPORTANT: All hooks must be declared before any early returns to maintain hook order consistency
+  if (hasValidPositions) {
+    const initialCenterX = initialPagePos.x + (initialPagePos.width / 2);
+    const initialCenterY = initialPagePos.y + (initialPagePos.height / 2);
+
+    const targetCenterX = targetPlaceholder.left + (targetPlaceholder.width / 2);
+    const targetCenterY = targetPlaceholder.top + (targetPlaceholder.height / 2);
+
+    deltaX = targetCenterX - initialCenterX;
+    // FIX: Changed from -12 to -34 to lift the cards perfectly into alignment
+    deltaY = (targetCenterY - initialCenterY) - 24;
+  }
+
   const translateX = useTransform(
     scrollProgress,
     [0, animationStart, animationEnd, 1],
@@ -147,10 +148,13 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
   const rotateZ = useTransform(
     scrollProgress,
-    [0, animationStart, animationEnd],
-    [card.position.rotation, card.position.rotation, card.position.rotation * -1]
+    [0, animationStart, Math.max(animationStart, animationEnd - 0.1), 1],
+    [card.position.rotation, card.position.rotation, 0, 0]
   );
 
+  const responsivePositionClass = card.side === 'left' 
+  ? "lg:left-0 xl:left-[3%] 2xl:left-[5%]" 
+  : "lg:right-0 xl:right-[3%] 2xl:right-[5%]";
 
   return (
     <motion.div
@@ -160,21 +164,20 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
         opacity: 1, 
         scale: 1, 
         y: 0, 
-        rotate: card.position.rotation, 
+        rotate: hasEnteredView ? 0 : card.position.rotation, 
         x: 0
       }}
       transition={!hasEnteredView ? { delay: card.delay, duration: 0.7, ease: "easeOut", type: "spring", stiffness: 100 } : {}}
       onAnimationComplete={() => !hasEnteredView && setHasEnteredView(true)}
-      className="absolute hidden lg:block z-20 pointer-events-none"
+      className={`absolute hidden lg:block z-50 pointer-events-none ${responsivePositionClass}`}
       style={{
         top: card.position.top,
-        left: "left" in card.position ? card.position.left : undefined,
-        right: "right" in card.position ? card.position.right : undefined,
         x: hasEnteredView ? translateX : 0,
         y: hasEnteredView ? translateY : 0,
         scale: hasEnteredView ? scale : 1,
         rotateZ: hasEnteredView ? rotateZ : 0,
         opacity: 1,
+        transformOrigin: "center center"
       }}
       data-testid={`card-hero-${card.heroIdx}`}
     >
@@ -185,11 +188,9 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
 
 function CardContent({ card }: { card: HeroCard }) {
   return (
-    <motion.div 
-      className="pointer-events-auto"
-    >
-      <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-72 h-56 cursor-pointer flex flex-col">
-        <div className="relative h-32 overflow-hidden">
+    <motion.div className="pointer-events-auto">
+      <div className="bg-white/95 backdrop-blur-md rounded-lg overflow-hidden shadow-lg hover:shadow-purple-500/30 transition-all w-64 h-52 lg:w-64 lg:h-52 xl:w-72 xl:h-56 cursor-pointer flex flex-col">
+        <div className="relative h-28 lg:h-28 xl:h-32 overflow-hidden">
           <img 
             src={card.image}
             alt={card.title}
@@ -230,27 +231,228 @@ interface HeroSectionProps {
   scrollProgress: MotionValue<number>;
   placeholderPositions: { left: DOMRect[]; right: DOMRect[] };
   heroSectionRef: React.RefObject<HTMLDivElement>;
+  isMobileOrTablet: boolean;
 }
 
-export default function HeroSection({ scrollProgress, placeholderPositions, heroSectionRef }: HeroSectionProps) {
+export default function HeroSection({ scrollProgress, placeholderPositions, heroSectionRef, isMobileOrTablet }: HeroSectionProps) {
   const heroCards = useMemo(() => getHeroCards(), []);
+  const mockOpacity = useMotionValue(0);
 
-  const reviewCardsOpacity = useTransform(
-    scrollProgress,
-    [0, 0.08, 0.15],
-    [1, 1, 0]
-  );
+  const reviewCardsOpacity = isMobileOrTablet 
+    ? mockOpacity
+    : useTransform(
+        scrollProgress,
+        [0, 0.08, 0.15],
+        [1, 1, 0]
+      );
 
   return (
-    <section ref={heroSectionRef} className="relative min-h-screen flex items-center justify-center overflow-visible">
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60" />
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-purple-900/20" />
+    <section ref={heroSectionRef} className="relative min-h-screen flex items-center justify-center lg:overflow-visible overflow-x-hidden w-full">
       
-      {heroCards.map((card) => (
+      <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/20 via-transparent to-purple-900/20" />
+
+        {!isMobileOrTablet && (
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <motion.div
+              animate={{ x: [0, 100, 0], y: [0, -50, 0] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-20 left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{ x: [0, -80, 0], y: [0, 60, 0] }}
+              transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"
+            />
+          </div>
+        )}
+
+        {/* Row 1: Top Reviews */}
+        <motion.div 
+          className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" 
+          style={{ top: "15%", width: "100%", maxWidth: "1150px", padding: "0 40px", justifyContent: "space-between", opacity: reviewCardsOpacity }}
+        >
+          {reviews[0] && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.6, y: 40, x: -50 }}
+              animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
+              style={{ rotate: 3 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border-2 border-purple-500 flex flex-col justify-between pointer-events-auto relative"
+            >
+              <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                ⭐ Top Review
+              </div>
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[0].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[0].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[0].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {reviews[1] && (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.6, y: 40, x: 50 }}
+              animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.8, ease: "easeOut", type: "spring", stiffness: 100 }}
+              style={{ rotate: -3 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+            >
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[1].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[1].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[1].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+
+        {/* Row 2: Middle Overlapping Reviews */}
+        <motion.div 
+          className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" 
+          style={{ top: "48%", width: "100%", maxWidth: "1400px", padding: "0 40px", opacity: reviewCardsOpacity }}
+        >
+          {reviews[2] && (
+            <motion.div 
+              initial={{ opacity: 0, rotate: 5, scale: 0.6, y: 40, x: -50 }}
+              animate={{ opacity: 1, rotate: 5, scale: 1, y: 0, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.9, ease: "easeOut", type: "spring", stiffness: 100 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+            >
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[2].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[2].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[2].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {reviews[3] && (
+            <motion.div 
+              initial={{ opacity: 0, rotate: -5, scale: 0.6, y: 40, x: 50 }}
+              animate={{ opacity: 1, rotate: -5, scale: 1, y: 0, x: 0 }}
+              transition={{ duration: 0.7, delay: 1.0, ease: "easeOut", type: "spring", stiffness: 100 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border-2 border-purple-500 flex flex-col justify-between pointer-events-auto relative"
+            >
+              <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                ⭐ Favorite
+              </div>
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[3].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[3].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[3].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+
+        {/* Row 3: Bottom Reviews */}
+        <motion.div 
+          className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" 
+          style={{ top: "65%", width: "100%", maxWidth: "1400px", padding: "0 40px", opacity: reviewCardsOpacity }}
+        >
+          {reviews[4] && (
+            <motion.div 
+              initial={{ opacity: 0, rotate: -5, scale: 0.6, x: -120, y: 100 }}
+              animate={{ opacity: 1, rotate: -5, scale: 1, x: -70, y: 60 }}
+              transition={{ duration: 0.7, delay: 1.1, ease: "easeOut", type: "spring", stiffness: 100 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+            >
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[4].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[4].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[4].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {reviews[5] && (
+            <motion.div 
+              initial={{ opacity: 0, rotate: 5, scale: 0.6, x: 120, y: 100 }}
+              animate={{ opacity: 1, rotate: 5, scale: 1, x: 70, y: 60 }}
+              transition={{ duration: 0.7, delay: 1.2, ease: "easeOut", type: "spring", stiffness: 100 }}
+              className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
+            >
+              <div>
+                <Quote className="w-4 h-4 text-purple-500 mb-2" />
+                <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[5].quote}</p>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-gray-800">{reviews[5].author}</span>
+                <div className="flex gap-0.5">
+                  {[...Array(reviews[5].rating)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+
+        {!isMobileOrTablet && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          >
+            <motion.div 
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center pt-2"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0], opacity: [1, 0.5, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-1.5 h-1.5 bg-white rounded-full"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+
+      {!isMobileOrTablet && heroCards.map((card) => (
         <AnimatedHeroCard
           key={`${card.id}-${card.side}`}
           card={card}
@@ -259,189 +461,37 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         />
       ))}
 
-      {/* Review Cards */}
-      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" style={{ top: "15%", width: "1150px", justifyContent: "space-between", opacity: reviewCardsOpacity }}>
-        {/* Left Review */}
-        {reviews[0] && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.6, y: 40, x: -50 }}
-            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.7, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{ rotate: 3 }}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border-2 border-purple-500 flex flex-col justify-between pointer-events-auto relative"
-          >
-            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-              ⭐ Top Review
-            </div>
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[0].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[0].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[0].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Right Review */}
-        {reviews[1] && (
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.6, y: 40, x: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.8, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{ rotate: -3 }}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
-          >
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[1].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[1].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[1].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
-
-      {/* Overlapping Review Cards */}
-      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "48%", width: "1400px", opacity: reviewCardsOpacity }}>
-        {/* Left Overlapping Review */}
-        {reviews[2] && (
-          <motion.div 
-            initial={{ opacity: 0, rotate: 5, scale: 0.6, y: 40, x: -50 }}
-            animate={{ opacity: 1, rotate: 5, scale: 1, y: 0, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.9, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{}}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
-          >
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[2].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[2].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[2].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Right Overlapping Review */}
-        {reviews[3] && (
-          <motion.div 
-            initial={{ opacity: 0, rotate: -5, scale: 0.6, y: 40, x: 50 }}
-            animate={{ opacity: 1, rotate: -5, scale: 1, y: 0, x: 0 }}
-            transition={{ duration: 0.7, delay: 1.0, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{}}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border-2 border-purple-500 flex flex-col justify-between pointer-events-auto relative"
-          >
-            <div className="absolute -top-3 -right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
-              ⭐ Favorite
-            </div>
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[3].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[3].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[3].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
-
-      {/* Slightly Invisible Review Cards Below */}
-      <motion.div className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" style={{ top: "65%", width: "1400px", opacity: reviewCardsOpacity }}>
-        {/* Left Invisible Review */}
-        {reviews[4] && (
-          <motion.div 
-            initial={{ opacity: 0, rotate: -5, scale: 0.6, x: -120, y: 100 }}
-            animate={{ opacity: 1, rotate: -5, scale: 1, x: -70, y: 60 }}
-            transition={{ duration: 0.7, delay: 1.1, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{}}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
-          >
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[4].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[4].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[4].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Right Invisible Review */}
-        {reviews[5] && (
-          <motion.div 
-            initial={{ opacity: 0, rotate: 5, scale: 0.6, x: 120, y: 100 }}
-            animate={{ opacity: 1, rotate: 5, scale: 1, x: 70, y: 60 }}
-            transition={{ duration: 0.7, delay: 1.2, ease: "easeOut", type: "spring", stiffness: 100 }}
-            style={{}}
-            className="w-72 h-28 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 shadow-lg border border-purple-200 flex flex-col justify-between pointer-events-auto"
-          >
-            <div>
-              <Quote className="w-4 h-4 text-purple-500 mb-2" />
-              <p className="text-xs text-gray-700 italic line-clamp-2">{reviews[5].quote}</p>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-gray-800">{reviews[5].author}</span>
-              <div className="flex gap-0.5">
-                {[...Array(reviews[5].rating)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </motion.div>
-
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 text-center">
+      {/* Keeps original scale-90 logic from your provided code */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 text-center hero-center-narrow lg:scale-90 xl:scale-100 transform-gpu">
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-8"
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, scale: 0.8 },
+            animate: { opacity: 1, scale: 1 },
+            transition: { duration: 0.5 }
+          })}
+          className="flex justify-center mb-6 sm:mb-8"
         >
           <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            {...(isMobileOrTablet ? {} : {
+              animate: { rotate: [0, 360] },
+              transition: { duration: 20, repeat: Infinity, ease: "linear" }
+            })}
             className="text-white/90"
           >
-            <AariLogo size={64} />
+            <AariLogo size={isMobileOrTablet ? 48 : 64} />
           </motion.div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.1 }
+          })}
         >
           <Badge 
             variant="secondary" 
-            className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm"
+            className="mb-4 sm:mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
           >
             <Sparkles className="w-3 h-3 mr-1" />
             AI-Powered Travel Planning
@@ -449,10 +499,12 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 30 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.2 }
+          })}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-2xl xl:text-6xl 2xl:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2"
         >
           Your Friendly
           <br />
@@ -462,89 +514,195 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-lg lg:text-xl text-white/80 max-w-2xl mx-auto mb-8"
-        >
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 30 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.3 }
+          })}
+          className="text-base sm:text-lg lg:text-xs xl:text-xl text-white/80 max-w-2xl lg:max-w-xs xl:max-w-2xl mx-auto mb-6 sm:mb-8 px-2"
+          >
           Meet Aari — your AI travel assistant that helps plan tours, book cabs, 
           and create personalized experiences just for you.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 30 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.4 }
+          })}
           className="flex justify-center"
         >
           <Button 
             size="lg" 
-            className="text-lg px-8 py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 shadow-lg shadow-purple-500/25"
+            className="text-base sm:text-lg lg:text-base px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 shadow-lg shadow-purple-500/25"
             data-testid="button-hero-start"
           >
             <motion.span
               className="flex items-center gap-2"
-              whileHover={{ x: 5 }}
-              transition={{ type: "spring", stiffness: 400 }}
+              {...(isMobileOrTablet ? {} : {
+                whileHover: { x: 5 },
+                transition: { type: "spring", stiffness: 400 }
+              })}
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
               Start Chatting
             </motion.span>
           </Button>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-12 flex items-center justify-center text-white/70"
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0 },
+            animate: { opacity: 1 },
+            transition: { duration: 0.6, delay: 0.6 }
+          })}
+          className="mt-8 sm:mt-12 flex items-center justify-center text-white/70"
         >
           <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            <span className="text-sm">
+            <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="text-xs sm:text-sm">
               Operating in <span className="font-semibold text-white">Kodaikanal</span>
             </span>
           </div>
         </motion.div>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.8 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-      >
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center pt-2"
-        >
+      {/* --- MOBILE / TABLET STATIC REVIEW CARDS (Fixed & Slanted) --- */}
+      {isMobileOrTablet && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          {/* Top Left - Slanted Left (-6deg) */}
           <motion.div
-            animate={{ y: [0, 8, 0], opacity: [1, 0.5, 1] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-1.5 h-1.5 bg-white rounded-full"
-          />
-        </motion.div>
-      </motion.div>
+            initial={{ opacity: 0, scale: 0.5, x: -20, y: -20, rotate: -6 }}
+            animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
+            transition={{ delay: 0.5, type: "spring" }}
+            className="absolute top-[18%] left-4 md:top-[20%] md:left-[10%] z-20"
+          >
+            {/* Added Purple Glow Effect */}
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
+                            w-24 h-24 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
+                            border border-purple-200/50"
+            >
+              <div className="md:hidden flex flex-col items-center gap-1">
+                <Badge variant="secondary" className="px-1 py-0 text-[9px] h-4">Top</Badge>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span className="text-[9px] font-bold leading-tight">Amazing!</span>
+              </div>
+              <div className="hidden md:block">
+                <div className="flex gap-0.5 mb-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
+                  "{reviews[0]?.quote || "Best experience ever!"}"
+                </p>
+                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[0]?.author}</p>
+              </div>
+            </div>
+          </motion.div>
 
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ 
-            x: [0, 100, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            x: [0, -80, 0],
-            y: [0, 60, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 right-10 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl"
-        />
-      </div>
+          {/* Top Right - Slanted Right (6deg) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, x: 20, y: -20, rotate: 6 }}
+            animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
+            transition={{ delay: 0.6, type: "spring" }}
+            className="absolute top-[18%] right-4 md:top-[20%] md:right-[10%] z-20"
+          >
+            {/* Added Purple Glow Effect */}
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
+                            w-24 h-24 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
+                            border border-purple-200/50"
+            >
+              <div className="md:hidden flex flex-col items-center">
+                <Quote className="w-5 h-5 text-purple-500 fill-purple-100" />
+                <span className="text-[9px] font-medium leading-tight mt-1 text-gray-700">Best Trip Ever</span>
+              </div>
+              <div className="hidden md:block">
+                <Quote className="w-3 h-3 text-purple-500 mb-1" />
+                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
+                  "{reviews[1]?.quote || "Highly recommended!"}"
+                </p>
+                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[1]?.author}</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Bottom Left - Slanted Left (-6deg) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, x: -20, y: 20, rotate: -6 }}
+            animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
+            transition={{ delay: 0.7, type: "spring" }}
+            // Changed md:bottom from 20% to 12%
+            className="absolute bottom-[12%] left-4 md:bottom-[12%] md:left-[10%] z-20"
+          >
+            {/* Added Purple Glow Effect */}
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
+                            w-24 h-24 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
+                            border border-purple-200/50"
+            >
+              <div className="md:hidden flex flex-col items-center">
+                <ThumbsUp className="w-5 h-5 text-blue-500" />
+                <span className="text-[9px] font-bold mt-1 text-gray-800">Verified</span>
+              </div>
+              <div className="hidden md:block">
+                <div className="flex gap-0.5 mb-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
+                  "{reviews[2]?.quote || "Aari made it seamless."}"
+                </p>
+                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[2]?.author}</p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Bottom Right - Slanted Right (6deg) */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5, x: 20, y: 20, rotate: 6 }}
+            animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
+            transition={{ delay: 0.8, type: "spring" }}
+            // Changed md:bottom from 20% to 12%
+            className="absolute bottom-[12%] right-4 md:bottom-[12%] md:right-[10%] z-20"
+          >
+            {/* Added Purple Glow Effect */}
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
+                            w-24 h-24 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
+                            border border-purple-200/50"
+            >
+              <div className="md:hidden flex flex-col items-center">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-[10px] font-bold">
+                  {reviews[3]?.author?.charAt(0) || "A"}
+                </div>
+                <span className="text-[9px] mt-1 font-medium text-gray-600">Loved it!</span>
+              </div>
+              <div className="hidden md:block">
+                <div className="flex items-center gap-1 mb-1">
+                  <Badge variant="secondary" className="text-[8px] h-4 px-1">Favorite</Badge>
+                  <div className="flex gap-0.5">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
+                  "{reviews[3]?.quote || "Perfect evening walk."}"
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 }

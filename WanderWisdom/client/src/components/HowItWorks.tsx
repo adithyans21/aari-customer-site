@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, FileText, CreditCard, Plane } from "lucide-react";
 import { motion } from "framer-motion";
+import { useIsMobileOrTablet } from "@/hooks/use-mobile";
 
 const steps = [
   {
@@ -30,82 +31,114 @@ const steps = [
 ];
 
 export default function HowItWorks() {
+  const isMobileOrTablet = useIsMobileOrTablet();
+  
   return (
-    <section className="py-16 lg:py-24 relative overflow-hidden" id="how-it-works">
+    <section className="py-12 sm:py-16 lg:py-24 relative overflow-hidden" id="how-it-works">
       <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/40 to-background" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 20 },
+            whileInView: { opacity: 1, y: 0 },
+            viewport: { once: true },
+            transition: { duration: 0.6 }
+          })}
+          className="text-center mb-8 sm:mb-12"
         >
-          <Badge variant="secondary" className="mb-4">
+          <Badge variant="secondary" className="mb-3 sm:mb-4">
             Simple Process
           </Badge>
-          <h2 className="text-3xl lg:text-5xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 sm:mb-4">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
               How Aari Works
             </span>
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
             From idea to adventure in four simple steps. No complicated planning, 
             no endless research.
           </p>
         </motion.div>
 
         <div className="relative">
-          <motion.div 
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="hidden lg:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent origin-left"
-          />
+          {!isMobileOrTablet && (
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1, delay: 0.5 }}
+              className="hidden lg:block absolute top-16 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent origin-left"
+            />
+          )}
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, idx) => (
-              <motion.div
-                key={step.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.15, duration: 0.5 }}
-                className="relative"
-              >
-                <motion.div 
-                  whileHover={{ y: -8 }}
-                  className="flex flex-col items-center text-center"
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {steps.map((step, idx) => {
+              const stepMotionProps = isMobileOrTablet 
+                ? {} 
+                : {
+                    initial: { opacity: 0, y: 30 },
+                    whileInView: { opacity: 1, y: 0 },
+                    viewport: { once: true },
+                    transition: { delay: idx * 0.15, duration: 0.5 }
+                  };
+              
+              const hoverProps = isMobileOrTablet 
+                ? {} 
+                : {
+                    whileHover: { y: -8 }
+                  };
+              
+              const iconHoverProps = isMobileOrTablet 
+                ? {} 
+                : {
+                    whileHover: { scale: 1.1, rotate: [0, -10, 10, 0] },
+                    transition: { type: "spring", stiffness: 300 }
+                  };
+              
+              const badgeProps = isMobileOrTablet 
+                ? {} 
+                : {
+                    initial: { scale: 0 },
+                    whileInView: { scale: 1 },
+                    viewport: { once: true },
+                    transition: { delay: 0.3 + idx * 0.1, type: "spring" }
+                  };
+              
+              return (
+                <motion.div
+                  key={step.id}
+                  {...stepMotionProps}
+                  className="relative"
                 >
                   <motion.div 
-                    whileHover={{ scale: 1.1, rotate: [0, -10, 10, 0] }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                    className="relative z-10 w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mb-6 shadow-lg shadow-primary/25"
+                    {...hoverProps}
+                    className="flex flex-col items-center text-center"
                   >
-                    <step.icon className="w-7 h-7 text-primary-foreground" />
                     <motion.div 
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 + idx * 0.1, type: "spring" }}
-                      className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-background border-2 border-primary flex items-center justify-center shadow-md"
+                      {...iconHoverProps}
+                      className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center mb-4 sm:mb-6 shadow-lg shadow-primary/25"
                     >
-                      <span className="text-sm font-bold text-primary">{step.id}</span>
+                      <step.icon className="w-6 h-6 sm:w-7 sm:h-7 text-primary-foreground" />
+                      <motion.div 
+                        {...badgeProps}
+                        className="absolute -top-2 -right-2 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-background border-2 border-primary flex items-center justify-center shadow-md"
+                      >
+                        <span className="text-xs sm:text-sm font-bold text-primary">{step.id}</span>
+                      </motion.div>
                     </motion.div>
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground max-w-[250px]">
+                      {step.description}
+                    </p>
                   </motion.div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm max-w-[250px]">
-                    {step.description}
-                  </p>
                 </motion.div>
-              </motion.div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

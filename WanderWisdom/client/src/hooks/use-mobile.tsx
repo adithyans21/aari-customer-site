@@ -1,6 +1,7 @@
 import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768
+const TABLET_BREAKPOINT = 1024
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
@@ -16,4 +17,25 @@ export function useIsMobile() {
   }, [])
 
   return !!isMobile
+}
+
+export function useIsMobileOrTablet() {
+  // Initialize with the actual value immediately to avoid hydration mismatches
+  const [isMobileOrTablet, setIsMobileOrTablet] = React.useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth < TABLET_BREAKPOINT
+  })
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${TABLET_BREAKPOINT - 1}px)`)
+    const onChange = () => {
+      setIsMobileOrTablet(window.innerWidth < TABLET_BREAKPOINT)
+    }
+    mql.addEventListener("change", onChange)
+    // Set initial value in case it changed
+    setIsMobileOrTablet(window.innerWidth < TABLET_BREAKPOINT)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+
+  return isMobileOrTablet
 }

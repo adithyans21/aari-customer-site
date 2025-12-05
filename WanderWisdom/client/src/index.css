@@ -286,3 +286,10 @@
     inset: -1px;
   }
 }
+
+/* Narrow the hero center content only on 1024px–1160px to reduce overlap with floating cards */
+@media (min-width: 1024px) and (max-width: 1160px) {
+  .hero-center-narrow {
+    max-width: 40rem;
+  }
+}

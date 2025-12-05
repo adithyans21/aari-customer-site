@@ -9,7 +9,8 @@ import Landing from "@/pages/Landing";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Landing} />
+     <Route path="/" component={Landing} />
+<Route path="/aari-customer-site/" component={Landing} />
       <Route component={NotFound} />
     </Switch>
   );

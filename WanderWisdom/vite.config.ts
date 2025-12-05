@@ -19,7 +19,7 @@ export default defineConfig({
         ]
       : []),
   ],
-  base: 'aari-customer-site',
+  base: '/aari-customer-site/',
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
