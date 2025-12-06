@@ -471,7 +471,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           })}
           className="flex justify-center mb-6 sm:mb-8"
         >
-          <motion.div
+          {/* <motion.div
             {...(isMobileOrTablet ? {} : {
               animate: { rotate: [0, 360] },
               transition: { duration: 20, repeat: Infinity, ease: "linear" }
@@ -479,10 +479,10 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             className="text-white/90"
           >
             <AariLogo size={isMobileOrTablet ? 48 : 64} />
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           {...(isMobileOrTablet ? {} : {
             initial: { opacity: 0, y: 20 },
             animate: { opacity: 1, y: 0 },
@@ -496,24 +496,42 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             <Sparkles className="w-3 h-3 mr-1" />
             AI-Powered Travel Planning
           </Badge>
-        </motion.div>
+        </motion.div> */}
 
-        <motion.h1
+<motion.h1
           {...(isMobileOrTablet ? {} : {
             initial: { opacity: 0, y: 30 },
             animate: { opacity: 1, y: 0 },
             transition: { duration: 0.6, delay: 0.2 }
           })}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-2xl xl:text-6xl 2xl:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto"
         >
-          Your Friendly
-          <br />
-          <span className="bg-gradient-to-r from-purple-300 via-pink-300 to-purple-400 bg-clip-text text-transparent">
-            Travel Planner
+          Plan your Kodaikanal experience
+          <br className="hidden md:block" />
+          <span className="inline-block mt-2 sm:mt-0">
+            with Aari{" "}
+            <motion.span
+              className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
+              style={{
+                // Complex gradients mixing together: White -> Pink -> Purple -> Blue
+                backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
+                backgroundSize: "400% 400%" // Huge background for smooth movement
+              }}
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] // Random swirling movement
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              AI
+            </motion.span>
           </span>
         </motion.h1>
 
-        <motion.p
+        {/* <motion.p
           {...(isMobileOrTablet ? {} : {
             initial: { opacity: 0, y: 30 },
             animate: { opacity: 1, y: 0 },
@@ -523,7 +541,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           >
           Meet Aari — your AI travel assistant that helps plan tours, book cabs, 
           and create personalized experiences just for you.
-        </motion.p>
+        </motion.p> */}
 
         <motion.div
           {...(isMobileOrTablet ? {} : {
@@ -546,12 +564,12 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
               })}
             >
               <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-              Start Chatting
+               Let’s Talk!
             </motion.span>
           </Button>
         </motion.div>
 
-        <motion.div
+        {/* <motion.div
           {...(isMobileOrTablet ? {} : {
             initial: { opacity: 0 },
             animate: { opacity: 1 },
@@ -565,7 +583,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
               Operating in <span className="font-semibold text-white">Kodaikanal</span>
             </span>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* --- MOBILE / TABLET STATIC REVIEW CARDS (Fixed & Slanted) --- */}
