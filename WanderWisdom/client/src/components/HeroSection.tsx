@@ -477,26 +477,6 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           })}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto text-center"
         >
-          <div className="block mt-2 sm:mt-0"> 
-            <motion.span
-              className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
-              style={{
-                backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
-                backgroundSize: "400% 400%" 
-              }}
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] 
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              AARI
-            </motion.span>
-          </div>
-          
           <span className="block mt-2">
             Your Local Kodai Travel Helpdesk
           </span>
@@ -512,7 +492,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         >
           <Button 
             size="lg" 
-            className="text-base sm:text-lg lg:text-base px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 shadow-lg shadow-purple-500/25"
+            className="rounded-full text-base sm:text-lg lg:text-base px-6 sm:px-8 py-5 sm:py-6 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 border-0 shadow-lg shadow-purple-500/25"
             data-testid="button-hero-start"
           >
             <motion.span
@@ -540,7 +520,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             className="mb-4 sm:mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
           >
             <Sparkles className="w-3 h-3 mr-1" />
-            Taxi, sightseeing & experiences—arranged instantly by AARI AI
+            Taxi, sightseeing & experiences
           </Badge>
         </motion.div>
       </div>
@@ -549,42 +529,33 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
       {isMobileOrTablet && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           
-          {/* 1. Top Left - Review Card (UNCHANGED) */}
+          {/* 1. Top Left - Review Card (GLOW ADDED, RESIZED) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: -20, y: -20, rotate: -6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
             transition={{ delay: 0.5, type: "spring" }}
             className="absolute top-[18%] left-4 md:top-[20%] md:left-[10%] z-20 pointer-events-auto"
           >
-            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
-                            w-24 h-24 md:w-48 md:h-auto
-                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
-                            border border-purple-200/50"
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.5)] rounded-xl
+                            w-32 h-32 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 md:block md:text-left md:p-3
+                            border-2 border-purple-400/50"
             >
-              <div className="md:hidden flex flex-col items-center gap-1">
-                <Badge variant="secondary" className="px-1 py-0 text-[9px] h-4">Top</Badge>
-                <div className="flex gap-0.5">
+              <div className="w-full">
+                <div className="flex gap-0.5 mb-1 justify-center md:justify-start">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                    <Star key={i} className="w-2.5 h-2.5 md:w-3 md:h-3 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-                <span className="text-[9px] font-bold leading-tight">Amazing!</span>
-              </div>
-              <div className="hidden md:block">
-                <div className="flex gap-0.5 mb-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
-                  "{reviews[0]?.quote || "Best experience ever!"}"
+                <p className="text-[8px] md:text-[10px] text-gray-600 line-clamp-3 md:line-clamp-none italic leading-tight">
+                  "Absolutely magical! The lake boating experience exceeded all my expectations."
                 </p>
-                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[0]?.author}</p>
+                <p className="text-[9px] md:text-[10px] font-bold text-gray-800 mt-1">- Sarah M.</p>
               </div>
             </div>
           </motion.div>
 
-          {/* 2. Top Right - TRIP CARD (FULL IMAGE) */}
+          {/* 2. Top Right - TRIP CARD (RESIZED TO w-32) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: 20, y: -20, rotate: 6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
@@ -592,20 +563,16 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             className="absolute top-[18%] right-4 md:top-[20%] md:right-[10%] z-20 pointer-events-auto"
             onClick={() => {
               console.log("Open Modal for:", popularTrips[0]?.title);
-              // TODO: Add your logic here, e.g., setSelectedTrip(popularTrips[0])
             }}
           >
-            <div className="relative w-24 h-24 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
-              {/* Full Background Image */}
+            {/* UPDATED: w-32 h-32 */}
+            <div className="relative w-32 h-32 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
               <img 
                 src={popularTrips[0]?.image} 
                 alt="Trip" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
               />
-              {/* Dark Overlay for Text Readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              
-              {/* Content Overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-2 flex flex-col items-center md:items-start">
                 <span className="text-[9px] md:text-xs font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
                   {popularTrips[0]?.title}
@@ -617,7 +584,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
 
-          {/* 3. Bottom Left - TRIP CARD (FULL IMAGE) */}
+          {/* 3. Bottom Left - TRIP CARD (RESIZED TO w-32) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: -20, y: 20, rotate: -6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
@@ -625,20 +592,16 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             className="absolute bottom-[12%] left-4 md:bottom-[12%] md:left-[10%] z-20 pointer-events-auto"
             onClick={() => {
               console.log("Open Modal for:", popularTrips[1]?.title);
-              // TODO: Add your logic here, e.g., setSelectedTrip(popularTrips[1])
             }}
           >
-            <div className="relative w-24 h-24 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
-              {/* Full Background Image */}
+             {/* UPDATED: w-32 h-32 */}
+            <div className="relative w-32 h-32 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
                <img 
                 src={popularTrips[1]?.image} 
                 alt="Trip" 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
               />
-              {/* Dark Overlay for Text Readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              
-              {/* Content Overlay */}
               <div className="absolute bottom-0 left-0 right-0 p-2 flex flex-col items-center md:items-start">
                 <span className="text-[9px] md:text-xs font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
                   {popularTrips[1]?.title}
@@ -650,36 +613,31 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
 
-          {/* 4. Bottom Right - Review Card (UNCHANGED) */}
+          {/* 4. Bottom Right - Review Card (GLOW ADDED, RESIZED) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: 20, y: 20, rotate: 6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
             transition={{ delay: 0.8, type: "spring" }}
             className="absolute bottom-[12%] right-4 md:bottom-[12%] md:right-[10%] z-20 pointer-events-auto"
           >
-            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
-                            w-24 h-24 md:w-48 md:h-auto
-                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
-                            border border-purple-200/50"
+            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_25px_rgba(168,85,247,0.5)] rounded-xl
+                            w-32 h-32 md:w-48 md:h-auto
+                            flex flex-col items-center justify-center text-center p-2 md:block md:text-left md:p-3
+                            border-2 border-purple-400/50"
             >
-              <div className="md:hidden flex flex-col items-center">
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-[10px] font-bold">
-                  {reviews[3]?.author?.charAt(0) || "A"}
-                </div>
-                <span className="text-[9px] mt-1 font-medium text-gray-600">Loved it!</span>
-              </div>
-              <div className="hidden md:block">
-                <div className="flex items-center gap-1 mb-1">
-                  <Badge variant="secondary" className="text-[8px] h-4 px-1">Favorite</Badge>
+              <div className="w-full">
+                <div className="flex items-center gap-1 mb-1 justify-center md:justify-start">
+                  <Badge variant="secondary" className="text-[7px] md:text-[8px] h-3.5 px-1">Favorite</Badge>
                   <div className="flex gap-0.5">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-2 h-2 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="w-2.5 h-2.5 md:w-3 md:h-3 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
                 </div>
-                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
-                  "{reviews[3]?.quote || "Perfect evening walk."}"
+                <p className="text-[8px] md:text-[10px] text-gray-600 line-clamp-3 md:line-clamp-none italic leading-tight">
+                  "Perfect evening walk with stunning views. Aari made the entire experience seamless!"
                 </p>
+                <p className="text-[9px] md:text-[10px] font-bold text-gray-800 mt-1">- Arjun P.</p>
               </div>
             </div>
           </motion.div>

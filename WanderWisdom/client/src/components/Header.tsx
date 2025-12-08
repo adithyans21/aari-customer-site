@@ -57,10 +57,20 @@ export default function Header() {
               {...logoProps}
               className="text-foreground"
             >
-              <AariLogo size={36} />
+              {/* UPDATED: Increased size from 36 to 42 */}
+              <AariLogo size={42} />
             </motion.div>
-            <span className="text-lg sm:text-xl font-bold text-foreground">Aari</span>
-            <Badge variant="secondary" className="text-xs hidden sm:inline-flex">BETA</Badge>
+            
+            {/* UPDATED: Increased text size to xl (mobile) and 2xl (desktop) */}
+            <span className="text-xl sm:text-2xl font-bold text-foreground">Aari</span>
+            
+            {/* UPDATED: Removed 'hidden', decreased text size to [10px], adjusted padding/height */}
+            <Badge 
+              variant="secondary" 
+              className="text-[10px] px-1.5 h-5 flex items-center justify-center"
+            >
+              BETA
+            </Badge>
           </a>
 
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
@@ -111,12 +121,7 @@ export default function Header() {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <>
-            {/* 2. THE BACKDROP OVERLAY 
-               - fixed: Stick to viewport
-               - top-16: Start exactly below the header (64px)
-               - bottom-0: Go all the way down to cover the page
-               - z-[49]: Sit on top of everything else, but below the Menu Content
-            */}
+            {/* 2. THE BACKDROP OVERLAY */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
