@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Menu, X } from "lucide-react";
@@ -9,6 +9,16 @@ import AariLogo from "./AariLogo";
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isMobileOrTablet = useIsMobileOrTablet();
+
+  // 1. LOCK SCROLL WHEN MENU IS OPEN
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden"; // Disable scrolling
+    } else {
+      document.body.style.overflow = "unset"; // Enable scrolling
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isMobileMenuOpen]);
 
   const navItems = [
     { label: "Popular Trips", href: "#popular-trips" },
@@ -34,9 +44,13 @@ export default function Header() {
   return (
     <motion.header 
       {...headerProps}
-      className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50"
+      // Added 'border-b-0' when menu is open to blend better, optional.
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${
+        isMobileMenuOpen ? "bg-background" : "bg-background/80 backdrop-blur-md border-b border-border/50"
+      }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      {/* HEADER CONTENT (Logo, Desktop Nav, Toggle Button) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-50">
         <div className="flex items-center justify-between h-16 gap-4">
           <a href="#" className="flex items-center gap-2 group" data-testid="link-logo">
             <motion.div 
@@ -74,9 +88,6 @@ export default function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            {/* <Button variant="ghost" data-testid="button-login">
-              Log in
-            </Button> */}
             <Button 
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               data-testid="button-get-started"
@@ -99,45 +110,60 @@ export default function Header() {
 
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div
-            initial={isMobileOrTablet ? {} : { opacity: 0, height: 0 }}
-            animate={isMobileOrTablet ? {} : { opacity: 1, height: "auto" }}
-            exit={isMobileOrTablet ? {} : { opacity: 0, height: 0 }}
-            transition={isMobileOrTablet ? {} : { duration: 0.3 }}
-            className="lg:hidden bg-background border-b border-border"
-          >
-            <div className="px-4 sm:px-6 py-4 space-y-4">
-              {navItems.map((item, idx) => {
-                const linkProps = isMobileOrTablet 
-                  ? {} 
-                  : {
-                      initial: { opacity: 0, x: -20 },
-                      animate: { opacity: 1, x: 0 },
-                      transition: { delay: 0.05 * idx }
-                    };
-                return (
-                  <motion.a
-                    key={item.label}
-                    href={item.href}
-                    {...linkProps}
-                    className="block text-muted-foreground hover:text-foreground transition-colors font-medium"
-                    data-testid={`link-mobile-nav-${item.label.toLowerCase().replace(" ", "-")}`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </motion.a>
-                );
-              })}
-              <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                {/* <Button variant="ghost" className="justify-start" data-testid="button-mobile-login">
-                  Log in
-                </Button> */}
-                <Button data-testid="button-mobile-get-started">
-                  Get Started
-                </Button>
+          <>
+            {/* 2. THE BACKDROP OVERLAY 
+               - fixed: Stick to viewport
+               - top-16: Start exactly below the header (64px)
+               - bottom-0: Go all the way down to cover the page
+               - z-[49]: Sit on top of everything else, but below the Menu Content
+            */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-16 left-0 right-0 bottom-0 bg-black/60 backdrop-blur-sm z-[49] lg:hidden"
+              onClick={() => setIsMobileMenuOpen(false)} 
+            />
+
+            {/* 3. THE MENU CONTENT */}
+            <motion.div
+              initial={isMobileOrTablet ? {} : { opacity: 0, height: 0 }}
+              animate={isMobileOrTablet ? {} : { opacity: 1, height: "auto" }}
+              exit={isMobileOrTablet ? {} : { opacity: 0, height: 0 }}
+              transition={isMobileOrTablet ? {} : { duration: 0.3 }}
+              className="lg:hidden bg-background border-b border-border absolute top-16 left-0 right-0 z-50 shadow-xl"
+            >
+              <div className="px-4 sm:px-6 py-4 space-y-4">
+                {navItems.map((item, idx) => {
+                  const linkProps = isMobileOrTablet 
+                    ? {} 
+                    : {
+                        initial: { opacity: 0, x: -20 },
+                        animate: { opacity: 1, x: 0 },
+                        transition: { delay: 0.05 * idx }
+                      };
+                  return (
+                    <motion.a
+                      key={item.label}
+                      href={item.href}
+                      {...linkProps}
+                      className="block text-muted-foreground hover:text-foreground transition-colors font-medium text-lg py-2"
+                      data-testid={`link-mobile-nav-${item.label.toLowerCase().replace(" ", "-")}`}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      {item.label}
+                    </motion.a>
+                  );
+                })}
+                <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  <Button size="lg" className="w-full" data-testid="button-mobile-get-started">
+                    Get Started
+                  </Button>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </motion.header>
