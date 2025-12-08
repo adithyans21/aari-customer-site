@@ -196,16 +196,15 @@ export default function PopularTrips({ scrollProgress, onPlaceholderPositionsCha
         >
           <Badge variant="secondary" className="mb-3 sm:mb-4">
             <MapPin className="w-3 h-3 mr-1" />
-            Explore Kodaikanal
+            Local Rates, No Markups
           </Badge>
           <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 sm:mb-4">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              Popular Trips
+              Best Local Trips, Handpicked by AARI
             </span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover our most loved experiences. Click any trip to see full details, 
-            photos, and book your adventure.
+            Our most requested sightseeing trips in Kodaikanal - fair local pricing, trusted drivers, and instant booking.
           </p>
         </motion.div>
       </div>

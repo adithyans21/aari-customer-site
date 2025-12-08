@@ -482,54 +482,46 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           </motion.div> */}
         </motion.div>
 
-        {/* <motion.div
-          {...(isMobileOrTablet ? {} : {
-            initial: { opacity: 0, y: 20 },
-            animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.6, delay: 0.1 }
-          })}
-        >
-          <Badge 
-            variant="secondary" 
-            className="mb-4 sm:mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
-          >
-            <Sparkles className="w-3 h-3 mr-1" />
-            AI-Powered Travel Planning
-          </Badge>
-        </motion.div> */}
+       
 
 <motion.h1
-          {...(isMobileOrTablet ? {} : {
-            initial: { opacity: 0, y: 30 },
-            animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.6, delay: 0.2 }
-          })}
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto"
-        >
-          Plan your Kodaikanal experience
-          <br className="hidden md:block" />
-          <span className="inline-block mt-2 sm:mt-0">
-            with Aari{" "}
-            <motion.span
-              className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
-              style={{
-                // Complex gradients mixing together: White -> Pink -> Purple -> Blue
-                backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
-                backgroundSize: "400% 400%" // Huge background for smooth movement
-              }}
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] // Random swirling movement
-              }}
-              transition={{
-                duration: 5,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            >
-              AI
-            </motion.span>
-          </span>
-        </motion.h1>
+  {...(isMobileOrTablet ? {} : {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6, delay: 0.2 }
+  })}
+  // Added 'text-center' to ensure both lines align in the middle
+  className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto text-center"
+>
+  {/* LINE 1: AARI */}
+  {/* Changed to 'block' so it claims the whole first line */}
+  <div className="block mt-2 sm:mt-0"> 
+    <motion.span
+      className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
+      style={{
+        backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
+        backgroundSize: "400% 400%" 
+      }}
+      animate={{
+        backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] 
+      }}
+      transition={{
+        duration: 5,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    >
+      AARI
+    </motion.span>
+  </div>
+   
+  {/* LINE 2: DESCRIPTION */}
+  {/* Wrapped in 'block' to force it onto the second line */}
+  <span className="block mt-2">
+    Your Local Kodai Travel Helpdesk
+  </span>
+  
+</motion.h1>
 
         {/* <motion.p
           {...(isMobileOrTablet ? {} : {
@@ -549,7 +541,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             animate: { opacity: 1, y: 0 },
             transition: { duration: 0.6, delay: 0.4 }
           })}
-          className="flex justify-center"
+          className="flex justify-center mb-8"
         >
           <Button 
             size="lg" 
@@ -564,9 +556,26 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
               })}
             >
               <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-               Let’s Talk!
+               Plan Today’s Sightseeing! 
             </motion.span>
           </Button>
+        </motion.div>
+
+         <motion.div
+          {...(isMobileOrTablet ? {} : {
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.6, delay: 0.1 }
+          })}
+        >
+          <Badge 
+            variant="secondary" 
+            className="mb-4 sm:mb-6  bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
+          >
+            <Sparkles className="w-3 h-3 mr-1" />
+            Taxi, sightseeing & experiences—arranged instantly by AARI AI
+
+          </Badge>
         </motion.div>
 
         {/* <motion.div

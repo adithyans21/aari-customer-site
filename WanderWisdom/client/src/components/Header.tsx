@@ -74,9 +74,9 @@ export default function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Button variant="ghost" data-testid="button-login">
+            {/* <Button variant="ghost" data-testid="button-login">
               Log in
-            </Button>
+            </Button> */}
             <Button 
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70"
               data-testid="button-get-started"
@@ -129,9 +129,9 @@ export default function Header() {
                 );
               })}
               <div className="flex flex-col gap-2 pt-4 border-t border-border">
-                <Button variant="ghost" className="justify-start" data-testid="button-mobile-login">
+                {/* <Button variant="ghost" className="justify-start" data-testid="button-mobile-login">
                   Log in
-                </Button>
+                </Button> */}
                 <Button data-testid="button-mobile-get-started">
                   Get Started
                 </Button>
