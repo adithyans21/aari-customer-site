@@ -33,7 +33,6 @@ const getHeroCards = (): HeroCard[] => {
       ...popularTrips[0],
       type: "trip",
       side: "left" as const,
-      // Left at 5% as requested (Do not touch)
       position: { top: "30%", left: "5%", rotation: -5 },
       delay: 0,
       heroIdx: 0,
@@ -42,7 +41,6 @@ const getHeroCards = (): HeroCard[] => {
       ...popularTrips[1],
       type: "trip",
       side: "right" as const,
-      // Left at 5% as requested (Do not touch)
       position: { top: "30%", right: "5%", rotation: 5 },
       delay: 0.15,
       heroIdx: 1,
@@ -124,7 +122,6 @@ function AnimatedHeroCard({ card, scrollProgress, placeholderPositions }: Animat
     const targetCenterY = targetPlaceholder.top + (targetPlaceholder.height / 2);
 
     deltaX = targetCenterX - initialCenterX;
-    // FIX: Changed from -12 to -34 to lift the cards perfectly into alignment
     deltaY = (targetCenterY - initialCenterY) - 24;
   }
 
@@ -272,7 +269,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           </div>
         )}
 
-        {/* Row 1: Top Reviews */}
+        {/* Row 1: Top Reviews (Desktop) */}
         <motion.div 
           className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 pointer-events-none z-30" 
           style={{ top: "15%", width: "100%", maxWidth: "1150px", padding: "0 40px", justifyContent: "space-between", opacity: reviewCardsOpacity }}
@@ -327,7 +324,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           )}
         </motion.div>
 
-        {/* Row 2: Middle Overlapping Reviews */}
+        {/* Row 2: Middle Overlapping Reviews (Desktop) */}
         <motion.div 
           className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" 
           style={{ top: "48%", width: "100%", maxWidth: "1400px", padding: "0 40px", opacity: reviewCardsOpacity }}
@@ -380,7 +377,7 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           )}
         </motion.div>
 
-        {/* Row 3: Bottom Reviews */}
+        {/* Row 3: Bottom Reviews (Desktop) */}
         <motion.div 
           className="absolute hidden lg:flex gap-8 left-1/2 -translate-x-1/2 justify-between pointer-events-none z-30" 
           style={{ top: "65%", width: "100%", maxWidth: "1400px", padding: "0 40px", opacity: reviewCardsOpacity }}
@@ -461,7 +458,6 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         />
       ))}
 
-      {/* Keeps original scale-90 logic from your provided code */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-20 sm:py-32 text-center hero-center-narrow lg:scale-90 xl:scale-100 transform-gpu">
         <motion.div
           {...(isMobileOrTablet ? {} : {
@@ -471,69 +467,40 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
           })}
           className="flex justify-center mb-6 sm:mb-8"
         >
-          {/* <motion.div
-            {...(isMobileOrTablet ? {} : {
-              animate: { rotate: [0, 360] },
-              transition: { duration: 20, repeat: Infinity, ease: "linear" }
-            })}
-            className="text-white/90"
-          >
-            <AariLogo size={isMobileOrTablet ? 48 : 64} />
-          </motion.div> */}
         </motion.div>
 
-       
-
-<motion.h1
-  {...(isMobileOrTablet ? {} : {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6, delay: 0.2 }
-  })}
-  // Added 'text-center' to ensure both lines align in the middle
-  className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto text-center"
->
-  {/* LINE 1: AARI */}
-  {/* Changed to 'block' so it claims the whole first line */}
-  <div className="block mt-2 sm:mt-0"> 
-    <motion.span
-      className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
-      style={{
-        backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
-        backgroundSize: "400% 400%" 
-      }}
-      animate={{
-        backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] 
-      }}
-      transition={{
-        duration: 5,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }}
-    >
-      AARI
-    </motion.span>
-  </div>
-   
-  {/* LINE 2: DESCRIPTION */}
-  {/* Wrapped in 'block' to force it onto the second line */}
-  <span className="block mt-2">
-    Your Local Kodai Travel Helpdesk
-  </span>
-  
-</motion.h1>
-
-        {/* <motion.p
+        <motion.h1
           {...(isMobileOrTablet ? {} : {
             initial: { opacity: 0, y: 30 },
             animate: { opacity: 1, y: 0 },
-            transition: { duration: 0.6, delay: 0.3 }
+            transition: { duration: 0.6, delay: 0.2 }
           })}
-          className="text-base sm:text-lg lg:text-xs xl:text-xl text-white/80 max-w-2xl lg:max-w-xs xl:max-w-2xl mx-auto mb-6 sm:mb-8 px-2"
-          >
-          Meet Aari — your AI travel assistant that helps plan tours, book cabs, 
-          and create personalized experiences just for you.
-        </motion.p> */}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2 max-w-5xl mx-auto text-center"
+        >
+          <div className="block mt-2 sm:mt-0"> 
+            <motion.span
+              className="inline-block ml-1 font-black tracking-tight text-transparent bg-clip-text"
+              style={{
+                backgroundImage: "radial-gradient(circle, #ffffff, #ec4899, #9333ea, #3b82f6)",
+                backgroundSize: "400% 400%" 
+              }}
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "50% 100%", "0% 50%"] 
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              AARI
+            </motion.span>
+          </div>
+          
+          <span className="block mt-2">
+            Your Local Kodai Travel Helpdesk
+          </span>
+        </motion.h1>
 
         <motion.div
           {...(isMobileOrTablet ? {} : {
@@ -570,42 +537,25 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
         >
           <Badge 
             variant="secondary" 
-            className="mb-4 sm:mb-6  bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
+            className="mb-4 sm:mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm text-xs sm:text-sm lg:text-xs"
           >
             <Sparkles className="w-3 h-3 mr-1" />
             Taxi, sightseeing & experiences—arranged instantly by AARI AI
-
           </Badge>
         </motion.div>
-
-        {/* <motion.div
-          {...(isMobileOrTablet ? {} : {
-            initial: { opacity: 0 },
-            animate: { opacity: 1 },
-            transition: { duration: 0.6, delay: 0.6 }
-          })}
-          className="mt-8 sm:mt-12 flex items-center justify-center text-white/70"
-        >
-          <div className="flex items-center gap-2">
-            <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-            <span className="text-xs sm:text-sm">
-              Operating in <span className="font-semibold text-white">Kodaikanal</span>
-            </span>
-          </div>
-        </motion.div> */}
       </div>
 
-      {/* --- MOBILE / TABLET STATIC REVIEW CARDS (Fixed & Slanted) --- */}
+     {/* --- MOBILE / TABLET STATIC CARDS (Fixed & Slanted) --- */}
       {isMobileOrTablet && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {/* Top Left - Slanted Left (-6deg) */}
+          
+          {/* 1. Top Left - Review Card (UNCHANGED) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: -20, y: -20, rotate: -6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
             transition={{ delay: 0.5, type: "spring" }}
-            className="absolute top-[18%] left-4 md:top-[20%] md:left-[10%] z-20"
+            className="absolute top-[18%] left-4 md:top-[20%] md:left-[10%] z-20 pointer-events-auto"
           >
-            {/* Added Purple Glow Effect */}
             <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
                             w-24 h-24 md:w-48 md:h-auto
                             flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
@@ -634,74 +584,79 @@ export default function HeroSection({ scrollProgress, placeholderPositions, hero
             </div>
           </motion.div>
 
-          {/* Top Right - Slanted Right (6deg) */}
+          {/* 2. Top Right - TRIP CARD (FULL IMAGE) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: 20, y: -20, rotate: 6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
             transition={{ delay: 0.6, type: "spring" }}
-            className="absolute top-[18%] right-4 md:top-[20%] md:right-[10%] z-20"
+            className="absolute top-[18%] right-4 md:top-[20%] md:right-[10%] z-20 pointer-events-auto"
+            onClick={() => {
+              console.log("Open Modal for:", popularTrips[0]?.title);
+              // TODO: Add your logic here, e.g., setSelectedTrip(popularTrips[0])
+            }}
           >
-            {/* Added Purple Glow Effect */}
-            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
-                            w-24 h-24 md:w-48 md:h-auto
-                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
-                            border border-purple-200/50"
-            >
-              <div className="md:hidden flex flex-col items-center">
-                <Quote className="w-5 h-5 text-purple-500 fill-purple-100" />
-                <span className="text-[9px] font-medium leading-tight mt-1 text-gray-700">Best Trip Ever</span>
-              </div>
-              <div className="hidden md:block">
-                <Quote className="w-3 h-3 text-purple-500 mb-1" />
-                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
-                  "{reviews[1]?.quote || "Highly recommended!"}"
-                </p>
-                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[1]?.author}</p>
+            <div className="relative w-24 h-24 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
+              {/* Full Background Image */}
+              <img 
+                src={popularTrips[0]?.image} 
+                alt="Trip" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+              />
+              {/* Dark Overlay for Text Readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              
+              {/* Content Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-2 flex flex-col items-center md:items-start">
+                <span className="text-[9px] md:text-xs font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
+                  {popularTrips[0]?.title}
+                </span>
+                <Badge className="mt-1 h-4 px-1 text-[8px] bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
+                  ₹{popularTrips[0]?.price}
+                </Badge>
               </div>
             </div>
           </motion.div>
 
-          {/* Bottom Left - Slanted Left (-6deg) */}
+          {/* 3. Bottom Left - TRIP CARD (FULL IMAGE) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: -20, y: 20, rotate: -6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: -6 }}
             transition={{ delay: 0.7, type: "spring" }}
-            // Changed md:bottom from 20% to 12%
-            className="absolute bottom-[12%] left-4 md:bottom-[12%] md:left-[10%] z-20"
+            className="absolute bottom-[12%] left-4 md:bottom-[12%] md:left-[10%] z-20 pointer-events-auto"
+            onClick={() => {
+              console.log("Open Modal for:", popularTrips[1]?.title);
+              // TODO: Add your logic here, e.g., setSelectedTrip(popularTrips[1])
+            }}
           >
-            {/* Added Purple Glow Effect */}
-            <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
-                            w-24 h-24 md:w-48 md:h-auto
-                            flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
-                            border border-purple-200/50"
-            >
-              <div className="md:hidden flex flex-col items-center">
-                <ThumbsUp className="w-5 h-5 text-blue-500" />
-                <span className="text-[9px] font-bold mt-1 text-gray-800">Verified</span>
-              </div>
-              <div className="hidden md:block">
-                <div className="flex gap-0.5 mb-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-[10px] text-gray-600 line-clamp-2 italic">
-                  "{reviews[2]?.quote || "Aari made it seamless."}"
-                </p>
-                <p className="text-[10px] font-bold text-gray-800 mt-1">- {reviews[2]?.author}</p>
+            <div className="relative w-24 h-24 md:w-48 md:h-32 rounded-xl overflow-hidden shadow-2xl border-2 border-white/50 cursor-pointer group">
+              {/* Full Background Image */}
+               <img 
+                src={popularTrips[1]?.image} 
+                alt="Trip" 
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+              />
+              {/* Dark Overlay for Text Readability */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              
+              {/* Content Overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-2 flex flex-col items-center md:items-start">
+                <span className="text-[9px] md:text-xs font-bold text-white leading-tight line-clamp-1 drop-shadow-md">
+                  {popularTrips[1]?.title}
+                </span>
+                <Badge className="mt-1 h-4 px-1 text-[8px] bg-white/20 hover:bg-white/30 text-white border-0 backdrop-blur-sm">
+                  ₹{popularTrips[1]?.price}
+                </Badge>
               </div>
             </div>
           </motion.div>
 
-          {/* Bottom Right - Slanted Right (6deg) */}
+          {/* 4. Bottom Right - Review Card (UNCHANGED) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.5, x: 20, y: 20, rotate: 6 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0, rotate: 6 }}
             transition={{ delay: 0.8, type: "spring" }}
-            // Changed md:bottom from 20% to 12%
-            className="absolute bottom-[12%] right-4 md:bottom-[12%] md:right-[10%] z-20"
+            className="absolute bottom-[12%] right-4 md:bottom-[12%] md:right-[10%] z-20 pointer-events-auto"
           >
-            {/* Added Purple Glow Effect */}
             <div className="bg-white/90 backdrop-blur-md shadow-[0_0_20px_rgba(168,85,247,0.4)] rounded-xl
                             w-24 h-24 md:w-48 md:h-auto
                             flex flex-col items-center justify-center text-center p-2 gap-1 md:block md:text-left md:p-3
